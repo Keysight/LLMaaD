@@ -129,9 +129,9 @@ Full results are in [`llmaad_vs_adv_attacks/final_results.md`](llmaad_vs_adv_att
 ## Citation
 
 ```bibtex
-@inproceedings{
-  title     = {Misdirection as a Defense Against Model-Guided Automated Attacks on Agentic AI Systems},
-  year      = {2026},
+@inproceedings{,
+  title = {Misdirection as a Defense Against Model-Guided Automated Attacks on Agentic AI Systems},
+  year  = {2026},
 }
 ```
 
