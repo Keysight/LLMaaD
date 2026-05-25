@@ -64,7 +64,7 @@ llmaad_vs_adv_attacks/JailbreakingLLMs/PAIR_ATTACK.md
 
 paper/
 LICENSE
-THIRD_PARTY_LICENSES.mdllmaad_vs_adv_attacks/GPTFuzz/llmaad_results/llamaguard/vicuna/
+llmaad_vs_adv_attacks/GPTFuzz/llmaad_results/llamaguard/vicuna/
 llmaad_vs_adv_attacks/GPTFuzz/llmaad_results/llamaguard/abliterated/
 llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/llamaguard/vicuna/
 llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/llamaguard/abliterated/
@@ -73,3 +73,4 @@ llmaad_vs_adv_attacks/GPTFuzz/datasets/responses_labeled/
 
 llmaad_vs_adv_attacks/GPTFuzz/llmaad_results/llamaguard/
 llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/llamaguard/
+THIRD_PARTY_LICENSES.md
