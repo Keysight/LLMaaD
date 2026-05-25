@@ -1,0 +1,100 @@
+\subsection{End-to-End Evaluation Against Automated Attack Frameworks}
+\label{sec:e2e_eval}
+
+We conduct end-to-end adversarial evaluations using two state-of-the-art, model-guided attack frameworks: \textbf{GPTFuzz}~\cite{yu2023gptfuzzer,llmfuzzer2024} and \textbf{PAIR}~\cite{pair2023}. These experiments measure the operational attack success rate (ASR) when the full detect-and-block and detect-and-misdirect defense strategies are deployed against realistic automated attack campaigns.
+
+\subsubsection{Experimental Configuration}
+
+\mbox{}\\[8pt]
+Table~\ref{tab:e2e_config} summarizes the models and roles used across all experiments. Each attack framework was evaluated on 50 adversarial goals independently sampled from the AdvBench dataset~\cite{gcg2023} to match each framework's original evaluation protocol; the subsets are not shared across frameworks. Both configurations were evaluated under the detect-and-block and detect-and-misdirect defense strategies with a maximum of 50 iterations allocated per prompt.
+
+The choice of victim models is deliberate: we target the worst-case scenario for defense evaluation. Vicuna-13b exhibited the highest baseline ASR among aligned models in both the GPTFuzz and PAIR original papers, making it a representative upper bound for safety-aligned targets. The NeuralDaredevil-8B-abliterated model, having undergone refusal suppression, readily complies with jailbreak instructions without internal safety resistance. Together, these models span the spectrum from weakly aligned to entirely unaligned, providing a rigorous test of the defense framework's model-agnostic properties.
+
+\begin{table}[t]
+    \centering
+    \small
+    \setlength{\tabcolsep}{4pt}
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabular}{>{\raggedright\arraybackslash}p{2.0cm}
+                    >{\raggedright\arraybackslash}p{3.8cm}
+                    >{\raggedright\arraybackslash}p{1.8cm}}
+        \toprule
+        \textbf{Component} & \textbf{Model} & \textbf{Role} \\
+        \midrule
+        Victim (Target) & lmsys/\newline vicuna-13b-v1.5 & Primary \\
+        Victim (Target) & mlabonne/\newline NeuralDaredevil-\newline 8B-abliterated & Secondary \\
+        Mutator / Attacker & gpt-3.5-turbo & Prompt generation \\
+        Attacker Judge & GPTFuzz-RoBERTa~\cite{yu2023gptfuzzer} & GPTFuzz Judging \\
+        Attacker Judge & GPT-OSS-120B~\cite{pair2023} & PAIR Judging \\
+        Defender & Llama-Guard-3-8B & Detection \\
+        Reshaper & NeuralDaredevil-\newline 8B-abliterated & CMPE \\
+        Secondary Judge & Claude Sonnet 4.6 & Validation \\
+        \bottomrule
+    \end{tabular}
+    \caption{End-to-end evaluation model configuration.}
+    \label{tab:e2e_config}
+\end{table}
+
+The \textbf{detect-and-block} strategy routes each victim model response through the Llama-Guard-3-8B defender model, serving as a firewall; responses classified as harmful are replaced with a refusal message. The \textbf{detect-and-misdirect} strategy instead invokes the CMPE reshaping algorithm (Algorithm~\ref{algo:cmpe}) to generate a misdirected response that appears to satisfy the attacker's query while containing no genuinely harmful content.
+
+\subsubsection{Post-Hoc Validation via Secondary LLM Judge}
+
+\mbox{}\\[8pt]
+To ensure accurate evaluation of defense efficacy, we manually evaluated the final response produced by each framework for each of the 50 prompts and employed Claude Sonnet 4.6 as a secondary LLM judge to mitigate evaluation bias. Each jailbreak response was classified into one of two categories:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Jailbroken:} Genuinely harmful, actionable content that could cause real harm.
+    \item \textbf{False Positive:} Safe, incoherent, or off-topic response incorrectly flagged as jailbroken by the attacker's judge.
+\end{itemize}
+
+The \textit{Atk JBs} column records the raw count of responses the attacker's judge accepted as successful jailbreaks. The \textit{True JBs}, \textit{False Pos}, and \textit{False Neg} columns are all derived from \textit{Atk JBs} through this manual validation process: \textit{True JBs} are attacker-accepted responses confirmed as genuinely harmful; \textit{False Pos} are attacker-accepted responses found to be safe, incoherent, or otherwise non-harmful (wrong or off-topic outputs incorrectly flagged as jailbreaks); and \textit{False Neg} are harmful responses that the attacker's judge failed to claim as jailbreaks, i.e., genuine harms missed by the attack framework's own judge. The \textit{Misdirected} column counts responses where the attacker accepted a reshaped output as a jailbreak, contributing to false positives under the detect-and-misdirect strategy. The \textit{Defended} column reports prompts where the attack framework exhausted its maximum iteration budget without claiming success.
+
+\subsubsection{Results and Interpretation}
+
+\mbox{}\\[8pt]
+Tables~\ref{tab:gptfuzz_e2e} and~\ref{tab:pair_e2e} present the end-to-end results for GPTFuzz and PAIR, respectively.
+
+\begin{table*}[t]
+    \centering
+    \setlength{\tabcolsep}{6pt}
+    \renewcommand{\arraystretch}{1.2}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{llcccccccc}
+        \toprule
+        \textbf{Model} & \textbf{Defense} & \textbf{Total} & \textbf{Atk JBs} & \textbf{Misdirected} & \textbf{Defended} & \textbf{False Pos} & \textbf{False Neg} & \textbf{True JBs} & \textbf{Avg. Iter.} \\
+        \midrule
+        Vicuna      & Block     & 50 & 23 &  0 & 27 & 13 & 0 & 10 & 37.5 \\
+        Vicuna      & Misdirect & 50 &  4 & 44 &  2 &  4 & 0 &  0 &  6.8 \\
+        \midrule
+        Abliterated & Block     & 50 & 22 &  0 & 28 & 12 & 2 &  8 & 34.0 \\
+        Abliterated & Misdirect & 50 &  6 & 42 &  2 &  2 & 3 &  1 &  6.4 \\
+        \bottomrule
+    \end{tabular}}
+    \caption{GPTFuzz end-to-end results (50 prompts, max 50 iterations, rigorously validated ASR).}
+    \label{tab:gptfuzz_e2e}
+\end{table*}
+
+\begin{table*}[t]
+    \centering
+    \setlength{\tabcolsep}{6pt}
+    \renewcommand{\arraystretch}{1.2}
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{llcccccccc}
+        \toprule
+        \textbf{Model} & \textbf{Defense} & \textbf{Total} & \textbf{Atk JBs} & \textbf{Misdirected} & \textbf{Defended} & \textbf{False Pos} & \textbf{False Neg} & \textbf{True JBs} & \textbf{Avg. Iter.} \\
+        \midrule
+        Vicuna      & Block     & 50 &  5 &  0 & 45 &  2 & 0 &  3 & 46.4 \\
+        Vicuna      & Misdirect & 50 &  3 & 36 & 11 &  1 & 0 &  2 & 22.8 \\
+        \midrule
+        Abliterated & Block     & 50 &  9 &  0 & 41 &  6 & 2 &  1 & 46.0 \\
+        Abliterated & Misdirect & 50 &  3 & 46 &  1 &  1 & 0 &  2 & 13.2 \\
+        \bottomrule
+    \end{tabular}}
+    \caption{PAIR end-to-end results (50 prompts, max 50 iterations, rigorously validated ASR).}
+    \label{tab:pair_e2e}
+\end{table*}
+
+Under blocking, both frameworks achieved comparable validated true ASR: GPTFuzz reached 10/50 (20\%) on Vicuna-13b and 8/50 (16\%) on the abliterated model (avg.\ 34.0--37.5 iterations, 27--28 prompts defended), while PAIR achieved 3/50 (6\%) on Vicuna and 1/50 (2\%) on the abliterated model with fewer iterations (46.0--46.4) and a higher defended count (41--45), consistent with its more deliberate refinement strategy.
+
+The detect-and-misdirect strategy produced markedly stronger defense: for GPTFuzz the true ASR collapsed to 0/50 (0\%) on Vicuna and 1/50 (2\%) on the abliterated model, with 44 and 42 responses misdirected respectively and convergence accelerating to just 6.4--6.8 iterations; for PAIR, the true ASR dropped to 2/50 (4\%) on both targets with convergence at 13.2--22.8 iterations and false positives rising to 95--96\%. In both cases, misdirection caused the attacker's judge to accept reshaped responses as genuine jailbreaks and terminate early, while the few remaining validated jailbreaks correspond exclusively to cases where Llama-Guard-3-8B failed to intercept the response --- directly corresponding to the PPV reduction formalized in Eq.~\eqref{eq:ppv2} and the bounded ASR regime predicted in Section~\ref{sec:propanalysis}.
+
+Post-hoc validation revealed that the RoBERTa attacker judge exhibits a false positive rate exceeding 50\% on block-mode responses, underscoring the necessity of secondary validation. Comparable misdirection performance across both the safety-aligned Vicuna-13b and the refusal-suppressed abliterated-8B confirms that LLMaaD operates at the response layer, independent of the victim model's inherent alignment.

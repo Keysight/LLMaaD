@@ -1,0 +1,13 @@
+# Core defense framework
+torch>=2.0
+transformers>=4.36
+openai>=1.0
+requests
+google-genai
+
+# Attack framework integrations
+anthropic>=0.20
+litellm
+
+# Post-hoc analysis
+# (no additional deps beyond above)

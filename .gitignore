@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Generated model-response datasets — do not publish
+prompt_reshaping/datasets/data/abliterated_resp.json
+prompt_reshaping/datasets/data/toxic_data.json
+
+# Run outputs (regeneratable)
+all_results/
+logs/
+log_commands/
+
+# Scratch
+trash/
+
+# Claude Code internal config
+.claude/
+
+# Environment files
+.env
+.env.local
+*.env
+
+# macOS metadata
+.DS_Store
+**/.DS_Store
+
+# Attack framework logs and ephemeral outputs
+llmaad_vs_adv_attacks/GPTFuzz/logs/
+llmaad_vs_adv_attacks/GPTFuzz/__pycache__/
+llmaad_vs_adv_attacks/JailbreakingLLMs/logs/
+llmaad_vs_adv_attacks/JailbreakingLLMs/__pycache__/
+llmaad_vs_adv_attacks/JailbreakingLLMs/wandb/
+llmaad_vs_adv_attacks/JailbreakingLLMs/tea_debug.log
+
+llmaad_vs_adv_attacks/GPTFuzz/custom_scripts/
+llmaad_vs_adv_attacks/GPTFuzz/.gitignore
+llmaad_vs_adv_attacks/GPTFuzz/.gitattributes
+llmaad_vs_adv_attacks/GPTFuzz/ATTACK_REPORT.md
+
+
+
+# Dev/intermediate results (not reported in paper)
+llmaad_vs_adv_attacks/GPTFuzz/all_results/baseline/
+llmaad_vs_adv_attacks/GPTFuzz/all_results/harmbench/old/
+llmaad_vs_adv_attacks/GPTFuzz/llmaad_results/old/
+llmaad_vs_adv_attacks/JailbreakingLLMs/all_results/results_jsons/
+llmaad_vs_adv_attacks/JailbreakingLLMs/all_results/test_v1_results/
+llmaad_vs_adv_attacks/JailbreakingLLMs/all_results/test_v2_results/
+llmaad_vs_adv_attacks/JailbreakingLLMs/all_results/test_v3_results/
+llmaad_vs_adv_attacks/JailbreakingLLMs/all_results/test_v4_results/
+llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/old/
+
+llmaad_vs_adv_attacks/JailbreakingLLMs/custom_scripts/
+llmaad_vs_adv_attacks/JailbreakingLLMs/.gitignore
+llmaad_vs_adv_attacks/JailbreakingLLMs/.gitattributes
+llmaad_vs_adv_attacks/JailbreakingLLMs/PAIR_ATTACK.md
+
+LICENSE
+THIRD_PARTY_LICENSES.md
