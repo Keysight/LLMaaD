@@ -61,5 +61,7 @@ llmaad_vs_adv_attacks/JailbreakingLLMs/.gitignore
 llmaad_vs_adv_attacks/JailbreakingLLMs/.gitattributes
 llmaad_vs_adv_attacks/JailbreakingLLMs/PAIR_ATTACK.md
 
+
+paper/
 LICENSE
 THIRD_PARTY_LICENSES.md

@@ -14,12 +14,11 @@ As generative AI is integrated into agentic applications, defenses increasingly 
 
 | Directory | Description | Paper Section |
 |-----------|-------------|---------------|
-| `prompt_reshaping/` | Core LLMaaD defense framework — CMPE algorithm, detectors, LLM clients, CLI | §IV, §V |
-| `llmaad_vs_adv_attacks/GPTFuzz/` | GPTFuzz attack framework (vendored, MIT) + our integration scripts | §VI-B |
-| `llmaad_vs_adv_attacks/JailbreakingLLMs/` | PAIR attack framework (vendored, MIT) + our integration scripts | §VI-B |
-| `llmaad_vs_adv_attacks/post_hoc/` | Post-hoc validation scripts (Claude judge + CSV export) | §VI-B |
-| `llmaad_vs_adv_attacks/final_results.md` | Summary tables of end-to-end evaluation results | §VI-B |
-| `paper/` | LaTeX source for the manuscript | — |
+| `prompt_reshaping/` | Core LLMaaD defense framework — CMPE algorithm, detectors, LLM clients, CLI | IV, V |
+| `llmaad_vs_adv_attacks/GPTFuzz/` | GPTFuzz attack framework (vendored, MIT) + our integration scripts | VI-B |
+| `llmaad_vs_adv_attacks/JailbreakingLLMs/` | PAIR attack framework (vendored, MIT) + our integration scripts | VI-B |
+| `llmaad_vs_adv_attacks/post_hoc/` | Post-hoc validation scripts (Claude judge + CSV export) | VI-B |
+| `llmaad_vs_adv_attacks/final_results.md` | Summary tables of end-to-end evaluation results | VI-B |
 
 ---
 
@@ -114,7 +113,7 @@ Full results are in [`llmaad_vs_adv_attacks/final_results.md`](llmaad_vs_adv_att
 | Abliterated | detect-block     | 22      | 8       | —           | 28       | 34.0      |
 | Abliterated | detect-misdirect | 6       | 1       | 42          | 2        | 6.4       |
 
-### PAIR (50 prompts, max 50 iterations × 10 streams)
+### PAIR (50 prompts, max 5 iterations × 10 streams)
 
 | Model       | Defense Strategy | Atk JBs | True JBs | Misdirected | Defended | Avg Streams |
 |-------------|------------------|---------|---------|-------------|----------|-------------|
@@ -124,17 +123,6 @@ Full results are in [`llmaad_vs_adv_attacks/final_results.md`](llmaad_vs_adv_att
 | Abliterated | detect-misdirect | 3       | 2       | 46          | 1        | 13.2        |
 
 *Avg Iters/Streams = average over all 50 prompts. Lower = attacker exhausted budget earlier.*
-
----
-
-## Third-Party Components
-
-This repository includes vendored copies of two open-source attack frameworks, modified to interface with the LLMaaD defense. Both are MIT-licensed; see [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for details and a list of our modifications.
-
-| Framework | Original Repository | License | Our Additions |
-|-----------|--------------------|---------|----|
-| **GPTFuzz** | [sherdencooper/GPTFuzz](https://github.com/sherdencooper/GPTFuzz) | MIT | `gptfuzz_llmaad_parallel.py`, `custom_scripts/` |
-| **PAIR / JailbreakingLLMs** | [patrickrchao/JailbreakingLLMs](https://github.com/patrickrchao/JailbreakingLLMs) | MIT | `run_pair_detect_*.py`, `system_prompts.py`, `custom_scripts/` |
 
 ---
 
