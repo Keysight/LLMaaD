@@ -1,4 +1,4 @@
-# LLMaaD: LLM-as-a-Defender
+# LLMaaD: LLM-Misdirection-as-a-Defense-Strategy
 
 **Misdirection as a Defense Against Adversarial AI Agents**
 
