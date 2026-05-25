@@ -9,7 +9,7 @@ venv/
 # Generated model-response datasets — do not publish
 prompt_reshaping/datasets/data/abliterated_resp.json
 prompt_reshaping/datasets/data/toxic_data.json
-
+prompt_reshaping/PIPELINE.md
 # Run outputs (regeneratable)
 all_results/
 logs/
