@@ -129,9 +129,8 @@ Full results are in [`llmaad_vs_adv_attacks/final_results.md`](llmaad_vs_adv_att
 ## Citation
 
 ```bibtex
-@inproceedings{llmaad2026,
-  title     = {{LLMaaD}: {LLM}-as-a-Defender — Misdirection as a Defense Against Adversarial {AI} Agents},
-  booktitle = {Proceedings of the Annual Computer Security Applications Conference (ACSAC)},
+@inproceedings{
+  title     = {Misdirection as a Defense Against Model-Guided Automated Attacks on Agentic AI Systems},
   year      = {2026},
 }
 ```
