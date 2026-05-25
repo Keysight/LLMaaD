@@ -6,41 +6,35 @@ This directory contains the evaluation harness for testing the LLMaaD detect-and
 
 ```
 llmaad_vs_adv_attacks/
-├── GPTFuzz/                          # GPTFuzz framework (vendored, MIT) + our integration
-│   ├── gptfuzz_llmaad_parallel.py    # Main integration script (parallel, 50 prompts)
-│   ├── custom_scripts/               # Batch runners, baselines, test scripts
-│   ├── ATTACK_REPORT.md              # Setup and usage documentation
-│   ├── llmaad_results/llamaguard/    # Final experiment results (claude-judged)
+├── GPTFuzz/                                  # GPTFuzz framework (vendored, MIT) + our integration
+│   ├── gptfuzz_llmaad_parallel.py            # Main integration script (parallel, 50 prompts)
+│   ├── llmaad_results/                       # Final experiment results (claude-judged)
 │   └── [upstream GPTFuzz code]
-├── JailbreakingLLMs/                 # PAIR framework (vendored, MIT) + our integration
+├── JailbreakingLLMs/                         # PAIR framework (vendored, MIT) + our integration
 │   ├── run_pair_detect_block_parallel.py     # PAIR with detect-and-block defense
 │   ├── run_pair_detect_misdirect_parallel.py # PAIR with detect-and-misdirect defense
-│   ├── system_prompts.py             # Victim model system prompts
-│   ├── custom_scripts/               # Batch runners and utilities
-│   ├── PAIR_ATTACK.md                # Setup and usage documentation
-│   ├── llmaad_results/llamaguard/    # Final experiment results (claude-judged)
+│   ├── system_prompts.py                     # Victim model system prompts
+│   ├── llmaad_results/            # Final experiment results (claude-judged)
 │   └── [upstream JailbreakingLLMs code]
-├── post_hoc/                         # Post-hoc validation and analysis
-│   ├── claude_judge_attack_jailbreaks.py  # Secondary LLM judge (Claude Sonnet)
-│   └── json_to_csv.py                    # Export results to CSV
-└── final_results.md                  # Summary tables (paper §VI-B)
+├── post_hoc/                                 # Post-hoc validation and analysis
+│   ├── claude_judge_attack_jailbreaks.py     # Secondary LLM judge (Claude Sonnet)
+│   └── json_to_csv.py                        # Export results to CSV
+└── final_results.md                          # Summary tables (paper VI-B)
 ```
 
 ## Model Configuration
 
 All experiments use the following model stack (served locally via vLLM):
 
-| Role | Model | Endpoint |
-|------|-------|---------|
-| Victim (primary) | lmsys/vicuna-13b-v1.5 | `http://localhost:8000/v1` |
-| Victim (secondary) | mlabonne/NeuralDaredevil-8B-abliterated | `http://localhost:8001/v1` |
-| Mutator / Attacker | gpt-3.5-turbo | OpenAI API |
-| Defender | meta-llama/Llama-Guard-3-8B | `http://localhost:8002/v1` |
-| Reshaper (CMPE) | mlabonne/NeuralDaredevil-8B-abliterated | `http://localhost:8001/v1` |
+| Role | Model |
+|------|-------|
+| Victim (primary) | lmsys/vicuna-13b-v1.5 |
+| Victim (secondary) | mlabonne/NeuralDaredevil-8B-abliterated |
+| Mutator / Attacker | gpt-3.5-turbo or gpt-oss-120B |
+| Defender | meta-llama/Llama-Guard-3-8B |
+| Reshaper (CMPE) | mlabonne/NeuralDaredevil-8B-abliterated |
 
 ## Running GPTFuzz Experiments
-
-See [`GPTFuzz/ATTACK_REPORT.md`](GPTFuzz/ATTACK_REPORT.md) for full instructions.
 
 ```bash
 cd GPTFuzz
@@ -54,8 +48,6 @@ python gptfuzz_llmaad_parallel.py --defense-mode detect-misdirect --victim vicun
 ```
 
 ## Running PAIR Experiments
-
-See [`JailbreakingLLMs/PAIR_ATTACK.md`](JailbreakingLLMs/PAIR_ATTACK.md) for full instructions.
 
 ```bash
 cd JailbreakingLLMs

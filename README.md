@@ -57,8 +57,7 @@ python -m prompt_reshaping.cli \
   --mode detect-misdirect
 ```
 
-See [`prompt_reshaping/README.md`](prompt_reshaping/README.md) and [`prompt_reshaping/PIPELINE.md`](prompt_reshaping/PIPELINE.md) for full configuration options.
-
+See [`prompt_reshaping/README.md`](prompt_reshaping/README.md)
 ---
 
 ## Reproducing the End-to-End Evaluation
@@ -124,15 +123,3 @@ Full results are in [`llmaad_vs_adv_attacks/final_results.md`](llmaad_vs_adv_att
 
 *Avg Iters/Streams = average over all 50 prompts. Lower = attacker exhausted budget earlier.*
 
----
-
-## Citation
-
-```bibtex
-@inproceedings{,
-  title = {Misdirection as a Defense Against Model-Guided Automated Attacks on Agentic AI Systems},
-  year  = {2026},
-}
-```
-
----
