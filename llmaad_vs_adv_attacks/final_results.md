@@ -18,12 +18,12 @@
 
 Avg Iters = average over all 50 prompts (GPTFuzz  iterations; PAIR  total streams = iterations × 10)
 
-| Model       | Defense Strategy | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iters |
-| ----------- | ---------------- | ----  | -------------  | ----  | --------  | -  | -------------  | --------  |
-| Vicuna      | detect-block     |    50 |             23 |     — |        27 | 13 |             10 |      37.5 |
-| Vicuna      | detect-misdirect |    50 |             48 |    44 |         2 |  4 |              0 |       6.8 |
-| Abliterated | detect-block     |    50 |             22 |     — |        28 | 14 |              8 |      34.0 |
-| Abliterated | detect-misdirect |    50 |             48 |    42 |         2 |  2 |              4 |       6.4 |
+| Model       | Defense Strategy          | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iters |
+| ----------- | ----------------          | ----  | -------------  | ----  | --------  | -  | -------------  | --------  |
+| Vicuna      | LLaMA-Guard3-8B           |    50 |             23 |     — |        27 | 13 |             10 |      37.5 |
+| Vicuna      | LLaMA-Guard3-8B + CMPE    |    50 |             48 |    44 |         2 |  4 |              0 |       6.8 |
+| Abliterated | LLaMA-Guard3-8B           |    50 |             22 |     — |        28 | 14 |              8 |      34.0 |
+| Abliterated | LLaMA-Guard3-8B + CMPE    |    50 |             48 |    42 |         2 |  2 |              4 |       6.4 |
 
 
 ---
@@ -32,9 +32,9 @@ Avg Iters = average over all 50 prompts (GPTFuzz  iterations; PAIR  total stream
 
 Avg Iters = average over all 50 prompts (total streams = iterations × 10)
 
-| Model        | Defense Strategy | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iters |
-| ------------ | ---------------- | ----  | -------------  | ----  | --------  | -  | -------------  | --------  |
-| Vicuna       | detect-block     |    50 |              8 |     — |        42 |  3 |              5 |      45.4 |
-| Vicuna       | detect-misdirect |    50 |             43 |    43 |         7 |  0 |              0 |      20.4 |
-| Abliterated  | detect-block     |    50 |             12 |     — |        38 |  7 |              5 |      41.4 |
-| Abliterated* | detect-misdirect |    50 |             47 |    47 |         3 |  0 |              0 |      15.8 |
+| Model        | Defense Strategy         | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iters |
+| ------------ | ----------------         | ----  | -------------  | ----  | --------  | -  | -------------  | --------  |
+| Vicuna       | LLaMA-Guard3-8B          |    50 |              8 |     — |        42 |  3 |              5 |      45.4 |
+| Vicuna       | LLaMA-Guard3-8B + CMPE   |    50 |             43 |    43 |         7 |  0 |              0 |      20.4 |
+| Abliterated  | LLaMA-Guard3-8B          |    50 |             12 |     — |        38 |  7 |              5 |      41.4 |
+| Abliterated* | LLaMA-Guard3-8B + CMPE   |    50 |             47 |    47 |         3 |  0 |              0 |      15.8 |
