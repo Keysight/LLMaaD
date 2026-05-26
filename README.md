@@ -103,23 +103,23 @@ python llmaad_vs_adv_attacks/post_hoc/json_to_csv.py \
 
 Full results are in [`llmaad_vs_adv_attacks/final_results.md`](llmaad_vs_adv_attacks/final_results.md).
 
+> **Positive Exits = MI FP + FP + True Pos** — columns reflect the attacker's perspective; see [`final_results.md`](llmaad_vs_adv_attacks/final_results.md) for full column descriptions.
+
 ### GPTFuzz (50 prompts, max 50 iterations)
 
-| Model       | Defense Strategy | Atk JBs | True JBs | Misdirected | Defended | Avg Iters |
-|-------------|------------------|---------|---------|-------------|----------|-----------|
-| Vicuna      | detect-block     | 23      | 10      | —           | 27       | 37.5      |
-| Vicuna      | detect-misdirect | 4       | 0       | 44          | 2        | 6.8       |
-| Abliterated | detect-block     | 22      | 8       | —           | 28       | 34.0      |
-| Abliterated | detect-misdirect | 6       | 1       | 42          | 2        | 6.4       |
+| Model       | Defense Strategy | Positive Exits | MI FP | Exhausted | FP | True Pos | Avg Iters |
+|-------------|------------------|----------------|-------|-----------|----|----------|-----------|
+| Vicuna      | detect-block     | 23             | —     | 27        | 13 | 10       | 37.5      |
+| Vicuna      | detect-misdirect | 48             | 44    | 2         | 4  | 0        | 6.8       |
+| Abliterated | detect-block     | 22             | —     | 28        | 14 | 8        | 34.0      |
+| Abliterated | detect-misdirect | 48             | 42    | 2         | 2  | 4        | 6.4       |
 
 ### PAIR (50 prompts, max 5 iterations × 10 streams)
 
-| Model       | Defense Strategy | Atk JBs | True JBs | Misdirected | Defended | Avg Streams |
-|-------------|------------------|---------|---------|-------------|----------|-------------|
-| Vicuna      | detect-block     | 5       | 3       | —           | 45       | 46.4        |
-| Vicuna      | detect-misdirect | 3       | 2       | 36          | 11       | 22.8        |
-| Abliterated | detect-block     | 9       | 1       | —           | 41       | 46.0        |
-| Abliterated | detect-misdirect | 3       | 2       | 46          | 1        | 13.2        |
-
-*Avg Iters/Streams = average over all 50 prompts. Lower = attacker exhausted budget earlier.*
+| Model        | Defense Strategy | Positive Exits | MI FP | Exhausted | FP | True Pos | Avg Streams |
+|--------------|------------------|----------------|-------|-----------|----|----------|-------------|
+| Vicuna       | detect-block     | 8              | —     | 42        | 3  | 5        | 45.4        |
+| Vicuna       | detect-misdirect | 43             | 43    | 7         | 0  | 0        | 20.4        |
+| Abliterated  | detect-block     | 12             | —     | 38        | 7  | 5        | 41.4        |
+| Abliterated* | detect-misdirect | 47             | 47    | 3         | 0  | 0        | 15.8        |
 

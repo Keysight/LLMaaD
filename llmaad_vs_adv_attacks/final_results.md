@@ -1,7 +1,3 @@
-## End-to-End Evaluation Results
-
-From the attacker's perspective, a run terminates with a **Positive Exit** whenever the attacker's own judge accepts a response as a successful jailbreak. Positive exits decompose into three mutually exclusive outcomes:
-
 > **Positive Exits (claimed jailbreaks) = MI FP + FP + True Positives**
 
 ### Column Descriptions (Attacker POV)
@@ -25,9 +21,10 @@ Avg Iters = average over all 50 prompts (GPTFuzz  iterations; PAIR  total stream
 | Model       | Defense Strategy | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iters |
 | ----------- | ---------------- | ----  | -------------  | ----  | --------  | -  | -------------  | --------  |
 | Vicuna      | detect-block     |    50 |             23 |     — |        27 | 13 |             10 |      37.5 |
-| Vicuna      | detect-misdirect |    50 |              4 |     4 |         2 |  0 |              0 |       6.8 |
-| Abliterated | detect-block     |    50 |             22 |     — |        28 | 12 |             10 |      34.0 |
-| Abliterated | detect-misdirect |    50 |              6 |     2 |         2 |  0 |              4 |       6.4 |
+| Vicuna      | detect-misdirect |    50 |             48 |    44 |         2 |  4 |              0 |       6.8 |
+| Abliterated | detect-block     |    50 |             22 |     — |        28 | 14 |              8 |      34.0 |
+| Abliterated | detect-misdirect |    50 |             48 |    42 |         2 |  2 |              4 |       6.4 |
+
 
 ---
 
