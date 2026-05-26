@@ -80,7 +80,7 @@ prompt_reshaping/
 
 ## Algorithms
 
-### algo1 — Token-Jumble Pipeline
+### algorithm1 — Token-Jumble Pipeline
 
 ```
 prompt
@@ -94,17 +94,17 @@ prompt
                                             └─► judge
 ```
 
-### algo1q — algo1 + Follow-up Questions
+### CMPE — algorithm1 + Follow-up Questions
 
-Runs the full algo1 pipeline then appends a follow-up question to the harmful-injected prompt before final scoring.
+Runs the full algorithm1 pipeline then appends a follow-up question to the harmful-injected prompt before final scoring.
 
 ```
-... (algo1 steps 1–6) ...
+... (algorithm1 steps 1–6) ...
   └─► generate detailed follow-up question
         └─► judge
 ```
 
-### algo2 — Responseland
+### algorithm2 — Responseland
 
 Uses an abliterated model instructed to give a *detailed but wrong* answer. Bypasses prompt transformation entirely; works at the response level.
 

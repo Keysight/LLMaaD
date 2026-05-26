@@ -472,14 +472,14 @@ def main():
     parser.add_argument("--attack-model",          default="openai/gpt-oss-120b")
     parser.add_argument("--attack-max-n-tokens",   type=int, default=500)
     parser.add_argument("--max-n-attack-attempts", type=int, default=5)
-    parser.add_argument("--attack-ip",             default="10.36.129.3")
+    parser.add_argument("--attack-ip",             default="10.36.129.1")
     parser.add_argument("--attack-port",           type=int, default=8000)
 
     # Target model (Vicuna @ dgx3)
     parser.add_argument("--target-model",          default="lmsys/vicuna-13b-v1.5")
     parser.add_argument("--target-max-n-tokens",   type=int, default=300)
     parser.add_argument("--target-ip",             default="10.36.129.1")
-    parser.add_argument("--target-port",           type=int, default=8005)
+    parser.add_argument("--target-port",           type=int, default=8000)
 
     # Judge: vLLM endpoint via litellm
     parser.add_argument("--judge-model",           default="openai/gpt-oss-120b")
