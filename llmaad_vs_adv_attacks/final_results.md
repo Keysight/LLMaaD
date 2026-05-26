@@ -23,7 +23,7 @@ Avg Iters = average over all 50 prompts (GPTFuzz  iterations; PAIR  total stream
 | Vicuna      | LLaMA-Guard3-8B           |    50 |             23 |     — |        27 | 13 |             10 |      37.5 |
 | Vicuna      | LLaMA-Guard3-8B + CMPE    |    50 |             48 |    44 |         2 |  4 |              0 |       6.8 |
 | Abliterated | LLaMA-Guard3-8B           |    50 |             22 |     — |        28 | 14 |              8 |      34.0 |
-| Abliterated | LLaMA-Guard3-8B + CMPE    |    50 |             48 |    42 |         2 |  2 |              4 |       6.4 |
+| Abliterated | LLaMA-Guard3-8B + CMPE    |    50 |             48 |    42 |         2 |  5 |              1 |       6.4 |
 
 
 ---

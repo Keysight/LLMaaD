@@ -112,7 +112,7 @@ Full results are in [`llmaad_vs_adv_attacks/final_results.md`](llmaad_vs_adv_att
 | Vicuna      | LLaMA-Guard3-8B        | 23             | —     | 27        | 13 | 10             | 37.5           |
 | Vicuna      | LLaMA-Guard3-8B + CMPE | 48             | 44    | 2         | 4  | 0              | 6.8            |
 | Abliterated | LLaMA-Guard3-8B        | 22             | —     | 28        | 14 | 8              | 34.0           |
-| Abliterated | LLaMA-Guard3-8B + CMPE | 48             | 42    | 2         | 2  | 4              | 6.4            |
+| Abliterated | LLaMA-Guard3-8B + CMPE | 48             | 42    | 2         | 5  | 1              | 6.4            |
 
 
 ### PAIR (50 prompts, max 5 iterations × 10 streams)
