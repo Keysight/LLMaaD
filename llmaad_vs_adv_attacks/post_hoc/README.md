@@ -27,10 +27,6 @@ Converts claude-judged result JSON files to CSV — one row per prompt (best/out
 
 **Format detection:** Automatically detects GPTFuzz (flat iterations) vs PAIR (nested iterations → streams).
 
-**Row selection:**
-- `case == 'jailbroken'` → the winning iteration/stream
-- `case == 'misdirected'` → the misdirected iteration/stream
-- Otherwise → iteration/stream with the highest attacker judge score
 
 **Usage:**
 ```bash
