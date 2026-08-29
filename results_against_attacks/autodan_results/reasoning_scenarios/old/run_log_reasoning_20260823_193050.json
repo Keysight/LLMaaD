@@ -1,0 +1,41 @@
+{
+  "ts": "20260823_193050",
+  "attack": "reasoning",
+  "scenarios": [
+    "2",
+    "3"
+  ],
+  "total": 5,
+  "chunk_size": 1,
+  "n_chunks": 5,
+  "mutation": "use_strategy",
+  "method": "vanilla",
+  "algo": "algo1",
+  "models": {
+    "attacker": "vicuna",
+    "target": "abliterated",
+    "reshaper": "abliterated"
+  },
+  "chunks": [
+    {
+      "label": "reasoning [0\u20131]",
+      "log": "reasoning_chunk_0_1.log"
+    },
+    {
+      "label": "reasoning [1\u20132]",
+      "log": "reasoning_chunk_1_2.log"
+    },
+    {
+      "label": "reasoning [2\u20133]",
+      "log": "reasoning_chunk_2_3.log"
+    },
+    {
+      "label": "reasoning [3\u20134]",
+      "log": "reasoning_chunk_3_4.log"
+    },
+    {
+      "label": "reasoning [4\u20135]",
+      "log": "reasoning_chunk_4_5.log"
+    }
+  ]
+}

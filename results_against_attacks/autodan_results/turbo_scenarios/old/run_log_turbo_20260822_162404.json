@@ -1,0 +1,37 @@
+{
+  "ts": "20260822_162404",
+  "attack": "turbo",
+  "scenarios": [
+    "2",
+    "3"
+  ],
+  "total": 10,
+  "chunk_size": 3,
+  "n_chunks": 4,
+  "mutation": "use_strategy",
+  "method": "vanilla",
+  "algo": "algo1",
+  "models": {
+    "attacker": "vicuna",
+    "target": "vicuna",
+    "reshaper": "abliterated"
+  },
+  "chunks": [
+    {
+      "label": "turbo [0\u20133]",
+      "log": "turbo_chunk_0_3.log"
+    },
+    {
+      "label": "turbo [3\u20136]",
+      "log": "turbo_chunk_3_6.log"
+    },
+    {
+      "label": "turbo [6\u20139]",
+      "log": "turbo_chunk_6_9.log"
+    },
+    {
+      "label": "turbo [9\u201310]",
+      "log": "turbo_chunk_9_10.log"
+    }
+  ]
+}

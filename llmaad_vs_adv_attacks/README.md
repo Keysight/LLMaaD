@@ -30,7 +30,7 @@ All experiments use the following model stack (served locally via vLLM):
 |------|-------|
 | Victim (primary) | lmsys/vicuna-13b-v1.5 |
 | Victim (secondary) | mlabonne/NeuralDaredevil-8B-abliterated |
-| Mutator / Attacker | gpt-3.5-turbo or gpt-oss-120B |
+| Mutator / Attacker | gpt-3.5-turbo |
 | Defender | meta-llama/Llama-Guard-3-8B |
 | Reshaper (CMPE) | mlabonne/NeuralDaredevil-8B-abliterated |
 

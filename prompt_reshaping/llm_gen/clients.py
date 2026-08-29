@@ -1,12 +1,9 @@
 from dataclasses import dataclass
 import json, logging, time, uuid, requests
-from pathlib import Path
+from pathlib import Path 
 from typing import Any, Dict, Optional
 import openai
-from prompt_reshaping.artifacts.logging import get_log_action
-
-DEFAULT_OPENAI_MODEL = "gpt-4.1"
-
+import logging as _logging
 # ----------------------------
 # Shared request/response types
 # ----------------------------
@@ -22,12 +19,22 @@ class ChatRequest:
     stop: Optional[tuple] = None  # stop/eos tokens
 
 
-logger = logging.getLogger("prompt_reshaping")
+# ----------------------------
+# Logging setup (library-safe)
+# ----------------------------
+logger = _logging.getLogger(__name__)
 
 # ----------------------------
 # Base client
 # ----------------------------
 class BaseLLMClient:
+    """
+    Base class for LLM clients.
+
+    Features:
+    - request/response logging
+    - optional request command recording (dummy response)
+    """
 
     def __init__(
         self,
@@ -42,9 +49,14 @@ class BaseLLMClient:
         self.dummy_response = dummy_response
 
     def _new_request_id(self) -> str:
+        # short, file-friendly id
         return uuid.uuid4().hex[:12]
 
     def _write_request_command(self, req: ChatRequest, request_id: str) -> None:
+        """
+        Writes a line to request_commands file with the given template:
+        ''' filename.sh "sys_prompt" "user_prompt" > file_{request_id} '''
+        """
         self.request_commands_path.parent.mkdir(parents=True, exist_ok=True)
         line = (
             f"filename.sh "
@@ -56,18 +68,24 @@ class BaseLLMClient:
             f.write(line)
 
     def dummy_chat(self, req: ChatRequest):
+        """
+        Public entrypoint.
+        If record_commands is True: record shell command and return dummy response.
+        Otherwise: call _chat_impl.
+        """
         request_id = self._new_request_id()
+
         if self.record_commands:
             logger.info(
-                "[%s] record_commands=True | client=%s | request_id=%s | recording request command only",
-                get_log_action(), self.name, request_id,
+                "record_commands=True | client=%s | request_id=%s | recording request command only",
+                self.name,
+                request_id,
             )
             self._write_request_command(req, request_id)
-        return (self.dummy_response, {})
-
+        return self.dummy_response
 
 # ----------------------------
-# vLLM / OpenAI-compatible HTTP client
+# vLLM / OpenAI-compatible HTTP client (your DGX scripts)
 # ----------------------------
 class VLLMChatClient(BaseLLMClient):
 
@@ -96,10 +114,46 @@ class VLLMChatClient(BaseLLMClient):
                 return content if content is not None else ""
         except (KeyError, IndexError, TypeError):
             pass
-        logger.warning("[%s] extract_text: could not parse response: %s", get_log_action(), api_response)
+        logger.warning("_extract_text: could not extract text from response: %s", api_response)
         return str(api_response)
 
+    def _vicuna_completions(self, req: ChatRequest) -> tuple[str, Optional[Dict[str, Any]]]:
+        """Use /v1/completions for Vicuna — vLLM has no chat template registered for it."""
+        prompt = (
+            "A chat between a curious user and an artificial intelligence assistant. "
+            "The assistant gives helpful, detailed, and polite answers to the user's questions.\n\n"
+            f"USER: {req.user_prompt}\nASSISTANT:"
+        )
+        url = f"http://{self.ip}:{self.port}/v1/completions"
+        payload: Dict[str, Any] = {
+            "model": req.model or self.model_name,
+            "prompt": prompt,
+            "max_tokens": req.max_tokens,
+        }
+        if req.temperature is not None:
+            payload["temperature"] = req.temperature
+        if req.top_p is not None:
+            payload["top_p"] = req.top_p
+        if req.stop:
+            payload["stop"] = list(req.stop)
+
+        logger.debug("vicuna completions payload | client=%s | url=%s | payload=%s", self.name, url, payload)
+        start = time.time()
+        resp = requests.post(url, headers={"Content-Type": "application/json"},
+                             data=json.dumps(payload), timeout=self.timeout_sec)
+        elapsed = time.time() - start
+        resp.raise_for_status()
+        raw = resp.json()
+        logger.debug("vicuna raw response | client=%s | raw=%s | timetaken=%s", self.model_name, raw, elapsed)
+
+        text = raw["choices"][0]["text"].strip()
+        return text, raw
+
     def chat_impl(self, req: ChatRequest) -> tuple[str, Optional[Dict[str, Any]]]:
+        # Vicuna has no chat template in vLLM — route to raw completions endpoint
+        if "vicuna" in (self.model_name or "").lower():
+            return self._vicuna_completions(req)
+
         url = f"http://{self.ip}:{self.port}/v1/chat/completions"
         headers = {"Content-Type": "application/json"}
 
@@ -123,17 +177,19 @@ class VLLMChatClient(BaseLLMClient):
         if req.stop:
             payload["stop"] = list(req.stop)
 
-        logger.debug("[%s] request | client=%s | url=%s | payload=%s", get_log_action(), self.name, url, payload)
+        # Log full payload at DEBUG only (can be sensitive)
+        logger.debug("http payload | client=%s | url=%s | payload=%s", self.name, url, payload)
         start = time.time()
         resp = requests.post(url, headers=headers, data=json.dumps(payload), timeout=self.timeout_sec)
         elapsed = time.time() - start
         resp.raise_for_status()
         raw = resp.json()
-        logger.debug("[%s] response | client=%s | timetaken=%.2fs | raw=%s", get_log_action(), self.model_name, elapsed, raw)
+
+        # Log raw response at DEBUG only
+        logger.debug("http raw response | client=%s | raw=%s | timetaken=%s", self.model_name, raw, elapsed)
 
         return self._extract_text(raw), raw
-
-
+    
 class OpenAIChatClient(BaseLLMClient):
 
     def __init__(
@@ -147,23 +203,25 @@ class OpenAIChatClient(BaseLLMClient):
     def openai_llm(self, req: ChatRequest) -> tuple[str, Optional[Dict[str, Any]]]:
         client = openai.OpenAI()
         msg = [{"role": "system", "content": req.system_prompt}, {"role": "user", "content": req.user_prompt}]
-        logger.debug("[%s] request | client=%s | payload=%s", get_log_action(), self.model_name, msg)
+        logger.debug("http payload | client=%s | payload=%s", self.model_name, msg)
 
         try:
             start = time.time()
             response = client.chat.completions.create(
                 model=self.model_name or req.model,
                 messages=msg
+                # temperature=0.5
+                # max_tokens=1000
             )
             elapsed = time.time() - start
             response_dict = response.model_dump()
-            logger.debug("[%s] response | client=%s | timetaken=%.2fs | response=%s", get_log_action(), self.model_name, elapsed, response)
+            logger.debug("http raw response | client=%s | response=%s | timetaken=%s", self.model_name, (response), elapsed)
+
             return VLLMChatClient._extract_text(response_dict), response_dict
         except Exception as e:
             print(f"Error: {e}")
-            return ("Goal generation failed.", None)
-
-
+            return "Goal generation failed."
+        
 class GeminiChatClient(BaseLLMClient):
 
     def __init__(
@@ -179,14 +237,17 @@ class GeminiChatClient(BaseLLMClient):
         from google.genai import types
         client = genai.Client()
         msg = [{"role": "system", "content": req.system_prompt}, {"role": "user", "content": req.user_prompt}]
-        logger.debug("[%s] request | client=%s | payload=%s", get_log_action(), self.model_name, msg)
+        logger.debug("http payload | client=%s | payload=%s", self.model_name, msg)
         start = time.time()
         response = client.models.generate_content(
             model=self.model_name,
-            config=types.GenerateContentConfig(system_instruction=req.system_prompt),
+            config=types.GenerateContentConfig(
+                system_instruction=req.system_prompt),
             contents=req.user_prompt
         )
         response_dict = response.model_dump()
+
         elapsed = time.time() - start
-        logger.debug("[%s] response | client=%s | timetaken=%.2fs | response=%s", get_log_action(), self.model_name, elapsed, response)
+        logger.debug("http raw response | client=%s | response=%s | timetaken=%s", self.model_name, (response), elapsed)
+
         return VLLMChatClient._extract_text(response_dict), response_dict

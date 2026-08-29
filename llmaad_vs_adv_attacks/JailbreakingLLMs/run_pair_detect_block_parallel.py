@@ -124,7 +124,7 @@ def judge_single_http(messages, judge_ip, judge_port, judge_model,
     }
     for attempt in range(3):
         try:
-            resp = requests.post(url, json=payload, timeout=120)
+            resp = requests.post(url, json=payload, timeout=360)
             resp.raise_for_status()
             msg = resp.json()["choices"][0]["message"]
             # Reasoning models (e.g. gpt-oss-120b) put the final answer in
@@ -173,6 +173,27 @@ def score_with_judge(goal, target_str, attack_prompts, responses,
 
 def target_single_http(prompt, target_ip, target_port, target_model,
                        max_tokens, temperature=0, top_p=1):
+    # vicuna-13b-v1.5 has no chat template in transformers v4.44+;
+    # use /v1/completions with manual vicuna prompt format instead.
+    if "vicuna" in target_model.lower():
+        url = f"http://{target_ip}:{target_port}/v1/completions"
+        formatted = f"USER: {prompt}\nASSISTANT:"
+        payload = {
+            "model":       target_model,
+            "prompt":      formatted,
+            "max_tokens":  max_tokens,
+            "temperature": temperature,
+            "top_p":       top_p,
+        }
+        for attempt in range(3):
+            try:
+                resp = requests.post(url, json=payload, timeout=360)
+                resp.raise_for_status()
+                return resp.json()["choices"][0]["text"]
+            except Exception as e:
+                print(f"      [Target] Error (attempt {attempt + 1}): {e}")
+                time.sleep(2)
+        return ""
     url = f"http://{target_ip}:{target_port}/v1/chat/completions"
     payload = {
         "model":       target_model,
@@ -183,7 +204,7 @@ def target_single_http(prompt, target_ip, target_port, target_model,
     }
     for attempt in range(3):
         try:
-            resp = requests.post(url, json=payload, timeout=120)
+            resp = requests.post(url, json=payload, timeout=360)
             resp.raise_for_status()
             return resp.json()["choices"][0]["message"]["content"]
         except Exception as e:
@@ -225,7 +246,7 @@ def attacker_single_http(conv_messages, attack_ip, attack_port, attack_model,
     errors = 0
     while errors < 3:
         try:
-            resp = requests.post(url, json=payload, timeout=120)
+            resp = requests.post(url, json=payload, timeout=360)
             resp.raise_for_status()
             return resp.json()["choices"][0]["message"]["content"]
         except requests.exceptions.HTTPError as e:
@@ -468,17 +489,17 @@ def main():
         description="PAIR + LlamaGuard detect-block defense (PARALLEL)"
     )
 
-    # Attack model (Vicuna — classic PAIR setup, same as target)
-    parser.add_argument("--attack-model",          default="openai/gpt-oss-120b")
+    # Attack model (abliterated @ DGX1:8000 — uncensored, generates PAIR JSON without refusing)
+    parser.add_argument("--attack-model",          default="mlabonne/NeuralDaredevil-8B-abliterated")
     parser.add_argument("--attack-max-n-tokens",   type=int, default=500)
     parser.add_argument("--max-n-attack-attempts", type=int, default=5)
     parser.add_argument("--attack-ip",             default="10.36.129.1")
     parser.add_argument("--attack-port",           type=int, default=8000)
 
-    # Target model (Vicuna @ dgx3)
+    # Target model (vicuna-13b @ DGX2:8000 — uses /v1/completions, no chat template)
     parser.add_argument("--target-model",          default="lmsys/vicuna-13b-v1.5")
     parser.add_argument("--target-max-n-tokens",   type=int, default=300)
-    parser.add_argument("--target-ip",             default="10.36.129.1")
+    parser.add_argument("--target-ip",             default="10.36.129.2")
     parser.add_argument("--target-port",           type=int, default=8000)
 
     # Judge: vLLM endpoint via litellm
@@ -490,7 +511,7 @@ def main():
 
     # LlamaGuard @ dgx2:8000
     parser.add_argument("--llamaguard-model",      default="meta-llama/Llama-Guard-3-8B")
-    parser.add_argument("--llamaguard-url",        default="http://10.36.129.2:8000/v1",
+    parser.add_argument("--llamaguard-url",        default="http://10.36.129.1:8001/v1",
                         help="vLLM endpoint for LlamaGuard")
 
     # Parallelism
@@ -511,7 +532,7 @@ def main():
     # Output
     parser.add_argument(
         "--output",
-        default="llmaad_results/llamaguard/pair_llamaguard_block_vicuna_50p.json",
+        default="llmaad_results/detect_and_block/pair_llamaguard_block_vicuna_50p.json",
     )
     parser.add_argument("-v", "--verbosity", action="count", default=0)
 
