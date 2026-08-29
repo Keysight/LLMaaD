@@ -34,7 +34,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from loggers import logger
 from common import process_target_response, initialize_conversations, extract_json, get_init_msg
-from system_prompts import get_attacker_system_prompts, get_judge_system_prompt
+from system_prompts import get_attacker_system_prompts, get_judge_system_prompt, get_judge_system_prompt_misdirect_aware
 from config import ATTACK_TEMP, ATTACK_TOP_P
 
 REFUSAL_RESPONSE = (
@@ -206,7 +206,7 @@ def misdirect_batch_parallel(indices, prompts, reshaper_model, reshaper_ip, resh
 
 def make_judge_convs(goal, target_str, attack_prompts, responses):
     """Build OpenAI-format judge messages for each (prompt, response) pair."""
-    system_prompt = get_judge_system_prompt(goal, target_str)
+    system_prompt = get_judge_system_prompt_misdirect_aware(goal, target_str)
     convs = []
     for attack, resp in zip(attack_prompts, responses):
         full_prompt = f"[PROMPT]:{attack}\n[ASSISTANT'S RESPONSE]: {resp}"
@@ -610,17 +610,17 @@ def main():
     )
 
     # Attack model
-    parser.add_argument("--attack-model",          default="openai/gpt-oss-120b")
+    parser.add_argument("--attack-model",          default="mlabonne/NeuralDaredevil-8B-abliterated")
     parser.add_argument("--attack-max-n-tokens",   type=int, default=500)
     parser.add_argument("--max-n-attack-attempts", type=int, default=5)
-    parser.add_argument("--attack-ip",             default="10.36.129.3")
+    parser.add_argument("--attack-ip",             default="10.36.129.1")
     parser.add_argument("--attack-port",           type=int, default=8000)
 
     # Target model
     parser.add_argument("--target-model",          default="lmsys/vicuna-13b-v1.5")
     parser.add_argument("--target-max-n-tokens",   type=int, default=300)
-    parser.add_argument("--target-ip",             default="10.36.129.1")
-    parser.add_argument("--target-port",           type=int, default=8005)
+    parser.add_argument("--target-ip",             default="10.36.129.2")
+    parser.add_argument("--target-port",           type=int, default=8000)
 
     # Judge: vLLM endpoint via direct HTTP
     parser.add_argument("--judge-model",           default="openai/gpt-oss-120b")
@@ -631,7 +631,7 @@ def main():
 
     # LlamaGuard @ dgx2:8000
     parser.add_argument("--llamaguard-model",      default="meta-llama/Llama-Guard-3-8B")
-    parser.add_argument("--llamaguard-url",        default="http://10.36.129.2:8000/v1",
+    parser.add_argument("--llamaguard-url",        default="http://10.36.129.1:8001/v1",
                         help="vLLM endpoint for LlamaGuard")
 
     # LLMAAD reshaper
