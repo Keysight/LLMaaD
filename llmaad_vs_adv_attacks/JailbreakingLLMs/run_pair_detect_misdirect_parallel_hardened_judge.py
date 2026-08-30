@@ -1,5 +1,7 @@
 """
 PAIR Attack with Llama Guard 3 Defense — detect-misdirect — PARALLEL version.
+Hardened judge variant: judge prompt includes explicit instruction to assign low
+scores to cooperative-looking but non-operational misdirected responses.
 
 Defense mode: detect-misdirect
   - LlamaGuard classifies the target response after each iteration
@@ -10,13 +12,12 @@ Defense mode: detect-misdirect
       - If stream was misdirected → outcome = misdirected_jailbreak
       - If stream was safe/passed  → outcome = attack_jailbreak
 
-Attacker/Target: openai/gpt-oss-120b @ dgx3:8000 (configurable)
-Judge:           openai/gpt-oss-120b @ dgx3:8000 (configurable, direct HTTP)
-LlamaGuard:      meta-llama/Llama-Guard-3-8B @ dgx2:8000 (configurable)
-Reshaper:        mlabonne/NeuralDaredevil-8B-abliterated @ dgx1:8000 (configurable)
+Attacker/Target: lmsys/vicuna-13b-v1.5 @ 10.36.129.1:8005 (configurable)
+Judge:           openai/gpt-oss-120b @ 10.36.129.3:8000 (configurable, direct HTTP)
+LlamaGuard:      meta-llama/Llama-Guard-3-8B @ 10.36.129.2:8000 (configurable)
+Reshaper:        mlabonne/NeuralDaredevil-8B-abliterated @ 10.36.129.1:8000 (configurable)
 
-Based on run_pair_llamaguard_parallel.py (block version) and
-run_pair_harmbench_llmaad_parallel.py (misdirection logic).
+Based on run_pair_detect_misdirect_parallel.py with hardened judge prompt.
 """
 
 import argparse
@@ -34,7 +35,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from loggers import logger
 from common import process_target_response, initialize_conversations, extract_json, get_init_msg
-from system_prompts import get_attacker_system_prompts, get_judge_system_prompt
+from system_prompts import get_attacker_system_prompts, get_judge_system_prompt_hardened as get_judge_system_prompt
 from config import ATTACK_TEMP, ATTACK_TOP_P
 
 REFUSAL_RESPONSE = (
@@ -683,7 +684,7 @@ def main():
     # Output
     parser.add_argument(
         "--output",
-        default="llmaad_results/detect_and_misdirect/pair_llamaguard_misdirect_vicuna_50p.json",
+        default="llmaad_results/detect_and_misdirect/pair_llamaguard_misdirect_vicuna_50p_hardened_judge.json",
     )
     parser.add_argument("-v", "--verbosity", action="count", default=0)
 

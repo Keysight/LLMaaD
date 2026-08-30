@@ -4,15 +4,30 @@ from prompt_reshaping.llm_gen.clients import BaseLLMClient, VLLMChatClient, Chat
 
 DEFAULT_VLLM_PORT = 8000
 LOCAL_VLLM_MODEL_PROFILES = {
+    "vicuna": {
+        "ip": "10.36.129.1",
+        "model_name": "lmsys/vicuna-7b-v1.3",
+        "port": 8005,
+    },
     "abliterated": {
         "ip": "10.36.129.1",
         "model_name": "mlabonne/NeuralDaredevil-8B-abliterated",
         "port": DEFAULT_VLLM_PORT,
     },
     "gpt-oss": {
-        "ip": "10.36.129.2",
+        "ip": "10.36.129.3",
         "model_name": "openai/gpt-oss-120b",
         "port": DEFAULT_VLLM_PORT,
+    },
+    "qwen3": {
+        "ip": "10.36.129.2",
+        "model_name": "Qwen3-32B",
+        "port": DEFAULT_VLLM_PORT,
+    },
+    "gemma": {
+        "ip": "10.36.129.2",
+        "model_name": "gemma1-7b-it",
+        "port": 8001,
     },
 }
 

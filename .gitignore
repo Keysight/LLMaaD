@@ -7,6 +7,7 @@ venv/
 *.egg-info/
 
 # Generated model-response datasets — do not publish
+/adversarial_attack/*
 prompt_reshaping/datasets/data/abliterated_resp.json
 prompt_reshaping/datasets/data/toxic_data.json
 prompt_reshaping/PIPELINE.md
@@ -74,3 +75,53 @@ llmaad_vs_adv_attacks/GPTFuzz/datasets/responses_labeled/
 llmaad_vs_adv_attacks/GPTFuzz/llmaad_results/llamaguard/
 llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/llamaguard/
 THIRD_PARTY_LICENSES.md
+
+# Local Python runtime / venv (5 GB)
+.llmaad
+.llmaad/
+
+# VS Code workspace settings
+.vscode/
+
+# Personal/operational scripts and session state
+session_state.json
+session.py
+tg_bot.py
+scr.sh
+spot_check.py
+download.py
+SUGGESTIONS.md
+gptfzz_judging/
+
+# Nested cloned third-party repos (each has its own .git — use submodules or clone separately)
+adversarial_attack/AutoDAN-Turbo/
+adversarial_attack/AutoDAN-Reasoning/
+adversarial_attack/JailbreakingLLMs/
+# AutoDAN attack run logs and agentdojo run outputs (large, regeneratable)
+adversarial_attack/agentdojo/runs/
+adversarial_attack/**/__pycache__/
+
+# AutoDAN run_results: raw chunks and timestamped run dirs (regeneratable)
+results_against_attacks/autodan_results/run_results/run_*/
+results_against_attacks/autodan_results/run_results/run_logs/
+results_against_attacks/autodan_results/run_results/autodan_turbo/chunks/
+results_against_attacks/autodan_results/run_results/autodan_reasoning/chunks/
+# Intermediate merged outputs (not the final per-range files)
+results_against_attacks/autodan_results/run_results/autodan_turbo/turbo_merged.*
+results_against_attacks/autodan_results/run_results/autodan_turbo/turbo_use_strategy_merged_all.*
+results_against_attacks/autodan_results/run_results/autodan_reasoning/reasoning_merged.*
+# Autodan experiment logs
+results_against_attacks/autodan_results/logs/
+results_against_attacks/autodan_results/__pycache__/
+
+# Old/dev PAIR and GPTFuzz results
+results_against_attacks/pair_results/llmaad_results/old/
+results_against_attacks/gptfuzz_results/llamaguard/vicuna/
+results_against_attacks/gptfuzz_results/llamaguard/abliterated/
+
+# PAIR hardened-judge intermediate chunk files (keep only 50p merged)
+llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/detect_and_block/*chunk*.json
+llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/detect_and_misdirect/*chunk*.json
+# Exclude attack repos and intermediate results — not for submission
+/adversarial_attack/
+/results_against_attacks/

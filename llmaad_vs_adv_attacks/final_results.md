@@ -1,5 +1,29 @@
 > **Positive Exits (claimed jailbreaks) = MI FP + FP + True Positives**
 
+---
+
+### AutoDAN-Turbo Results (`use_strategy` mutation, n=100)
+
+Victim: lmsys/vicuna-13b-v1.5 | Scorer: gemma1-7b-it | Max epochs: 20 | Break score: 8.5
+
+| Defense Strategy | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iters |
+| ---------------- | ----- | -------------- | ----- | --------- | -- | -------------- | --------- |
+| LLaMA-Guard3-8B | 100 | 99 | — | 1 | 85 | 14 | 2.6 |
+| LLaMA-Guard3-8B + CMPE | 100 | 45 | 45 | 55 | 0 | 0 | 11.2 |
+
+---
+
+### AutoDAN-Reasoning Results (`vanilla` method, n=100)
+
+Victim: lmsys/vicuna-13b-v1.5 | Scorer: gemma1-7b-it | Max epochs: 10 | Break score: 8.5
+
+| Defense Strategy | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iters |
+| ---------------- | ----- | -------------- | ----- | --------- | -- | -------------- | --------- |
+| LLaMA-Guard3-8B | 100 | 57 | — | 43 | 52 | 5 | 5.8 |
+| LLaMA-Guard3-8B + CMPE | 100 | 16 | 7 | 84 | 9 | 0 | 9.8 |
+
+---
+
 ### Column Descriptions (Attacker POV)
 
 | Column | Attacker's Interpretation |

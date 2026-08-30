@@ -1,6 +1,11 @@
-import wandb
-import pandas as pd
-import logging 
+import logging
+
+try:
+    import wandb
+    import pandas as pd
+    _WANDB_AVAILABLE = True
+except Exception:
+    _WANDB_AVAILABLE = False
 
 def setup_logger():
     logger = logging.getLogger('PAIR')
@@ -28,6 +33,8 @@ class WandBLogger:
     """WandB logger."""
 
     def __init__(self, args, system_prompts):
+        if not _WANDB_AVAILABLE:
+            raise RuntimeError("wandb is not available in this environment")
         self.logger = wandb.init(
             project = "jailbreak-llms",
             config = {
