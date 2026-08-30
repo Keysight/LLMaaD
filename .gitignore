@@ -125,3 +125,6 @@ llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/detect_and_misdirect/*chun
 # Exclude attack repos and intermediate results — not for submission
 /adversarial_attack/
 /results_against_attacks/
+
+# misdirect_judge_pair local outputs (CSVs, scripts, extra JSONs — regeneratable)
+llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/misdirect_judge_pair/local_outputs/
