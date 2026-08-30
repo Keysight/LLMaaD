@@ -41,7 +41,7 @@ import anthropic
 from collections import Counter
 from pathlib import Path
 
-AZURE_BASE_URL = os.environ.get("AZURE_BASE_URL", "https://ati-ai-models-resource.services.ai.azure.com/anthropic/")
+AZURE_BASE_URL = os.environ.get("AZURE_BASE_URL", "")  # Set AZURE_BASE_URL env var for your Azure/proxy endpoint
 AZURE_API_KEY  = os.environ.get("AZURE_API_KEY") or os.environ.get("ANTHROPIC_API_KEY")
 JUDGE_MODEL    = "claude-sonnet-4-6"
 

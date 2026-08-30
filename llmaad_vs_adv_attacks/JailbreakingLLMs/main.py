@@ -99,7 +99,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         "--attack-ip",
-        default = "10.36.129.3",
+        default = "localhost",
         help = "IP address for vLLM attack model."
     )
     parser.add_argument(
@@ -130,7 +130,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         "--target-ip",
-        default = "10.36.129.3",
+        default = "localhost",
         help = "IP address for target model. Defaults to attack-ip if not set."
     )
     parser.add_argument(
@@ -180,7 +180,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         "--judge-ip",
-        default="10.36.129.2",
+        default="localhost",
         help="IP address for vLLM judge model."
     )
     parser.add_argument(

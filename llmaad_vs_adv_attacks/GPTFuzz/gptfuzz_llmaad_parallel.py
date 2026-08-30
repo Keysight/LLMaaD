@@ -414,22 +414,22 @@ def main():
     parser.add_argument("--mutator-model", default="gpt-3.5-turbo")
     parser.add_argument("--mutator-url", default="unused")
     parser.add_argument("--target-model", default="lmsys/vicuna-13b-v1.5")
-    parser.add_argument("--target-url", default="http://10.36.129.3:8000/v1")
+    parser.add_argument("--target-url", default="http://localhost:8000/v1")
 
     # HarmBench classifier
-    parser.add_argument("--harmbench-url", default="http://10.36.129.2:8000/v1",
+    parser.add_argument("--harmbench-url", default="http://localhost:8000/v1",
                         help="HarmBench classifier endpoint (vLLM completions API)")
     parser.add_argument("--harmbench-model", default="meta-llama/Llama-Guard-3-8B")
 
     # LLMAAD reshaper (only used in detect-misdirect mode)
     parser.add_argument("--reshaper-model", default="NousResearch/Hermes-3-Llama-3.1-8B")
-    parser.add_argument("--reshaper-ip", default="10.36.129.1")
+    parser.add_argument("--reshaper-ip", default="localhost")
     parser.add_argument("--reshaper-port", type=int, default=8000)
 
     # Judge config
     parser.add_argument("--judge-type", default="roberta", choices=["vllm", "roberta"])
     parser.add_argument("--judge-model", default="openai/gpt-oss-120b")
-    parser.add_argument("--judge-url", default="http://10.36.129.2:8000/v1")
+    parser.add_argument("--judge-url", default="http://localhost:8000/v1")
     parser.add_argument("--judge-max-tokens", type=int, default=500)
     parser.add_argument("--judge-threshold", type=int, default=10)
     parser.add_argument("--roberta-path", default="hubert233/GPTFuzz")

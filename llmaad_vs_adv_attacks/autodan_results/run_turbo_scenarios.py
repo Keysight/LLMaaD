@@ -6,10 +6,10 @@ Upgrade from run_scenarios.py (GA static template) to AutoDAN-Turbo's strategy-b
 mutation: warm_up_attack, use_strategy, find_new_strategy.
 
 Mutation models (default):
-  attacker          : gpt-oss     @ 10.36.129.3:8000
-  target (S1/S2)    : vicuna      @ 10.36.129.2:8000
-  reshaping (CMPE)  : abliterated @ 10.36.129.1:8000
-  scorer            : gpt-oss     @ 10.36.129.3:8000
+  attacker          : gpt-oss     @ localhost:8000
+  target (S1/S2)    : vicuna      @ localhost:8000
+  reshaping (CMPE)  : abliterated @ localhost:8000
+  scorer            : gpt-oss     @ localhost:8000
 
 Usage
 -----
@@ -54,11 +54,11 @@ CYAN   = "\033[96m"; BOLD  = "\033[1m";  RESET  = "\033[0m"
 # ── Target model config map ────────────────────────────────────────────────────
 
 TARGET_MODEL_MAP = {
-    "abliterated":  {"model": "mlabonne/NeuralDaredevil-8B-abliterated", "ip": "10.36.129.1", "port": 8000},
-    "vicuna":       {"model": "lmsys/vicuna-13b-v1.5",                   "ip": "10.36.129.2", "port": 8000},
-    "gpt-oss":      {"model": "openai/gpt-oss-120b",                     "ip": "10.36.129.3", "port": 8000},
-    "llamaguard":   {"model": "meta-llama/Llama-Guard-3-8B",             "ip": "10.36.129.1", "port": 8001},
-    "gemma":        {"model": "gemma1-7b-it",                            "ip": "10.36.129.2", "port": 8001},
+    "abliterated":  {"model": "mlabonne/NeuralDaredevil-8B-abliterated", "ip": "localhost", "port": 8000},
+    "vicuna":       {"model": "lmsys/vicuna-13b-v1.5",                   "ip": "localhost", "port": 8000},
+    "gpt-oss":      {"model": "openai/gpt-oss-120b",                     "ip": "localhost", "port": 8000},
+    "llamaguard":   {"model": "meta-llama/Llama-Guard-3-8B",             "ip": "localhost", "port": 8001},
+    "gemma":        {"model": "gemma1-7b-it",                            "ip": "localhost", "port": 8001},
 }
 ATTACKER_MODEL_MAP = TARGET_MODEL_MAP  # same servers
 
@@ -1126,10 +1126,10 @@ def spot_check(args):
     section("Endpoints")
     import requests as req
     for alias, url in [
-        ("abliterated 10.36.129.1:8000", "http://10.36.129.1:8000/v1/models"),
-        ("gpt-oss     10.36.129.3:8000", "http://10.36.129.3:8000/v1/models"),
-        ("vicuna      10.36.129.2:8000", "http://10.36.129.2:8000/v1/models"),
-        ("gemma       10.36.129.2:8001", "http://10.36.129.2:8001/v1/models"),
+        ("abliterated localhost:8000", "http://localhost:8000/v1/models"),
+        ("gpt-oss     localhost:8000", "http://localhost:8000/v1/models"),
+        ("vicuna      localhost:8000", "http://localhost:8000/v1/models"),
+        ("gemma       localhost:8001", "http://localhost:8001/v1/models"),
     ]:
         try:
             r = req.get(url, timeout=5)
@@ -1227,8 +1227,8 @@ def build_parser():
     p.add_argument("--scorer_model", default="gemma",
                    choices=list(TARGET_MODEL_MAP.keys()),
                    help="TurboScorer judge model (default: gemma)")
-    p.add_argument("--llamaguard_ip", default="10.36.129.1",
-                   help="IP of LlamaGuard vLLM server (default: 10.36.129.1)")
+    p.add_argument("--llamaguard_ip", default="localhost",
+                   help="IP of LlamaGuard vLLM server (default: localhost)")
     p.add_argument("--llamaguard_port", type=int, default=8001,
                    help="Port of LlamaGuard vLLM server (default: 8001)")
     p.add_argument("--max_epochs", type=int, default=MAX_EPOCHS,
@@ -1289,7 +1289,7 @@ def main():
         cfg = ATTACKER_MODEL_MAP.get(args.attacker_model)
         if not cfg:
             # treat as literal model name on gpt-oss server
-            cfg = {"model": args.attacker_model, "ip": "10.36.129.2", "port": 8000}
+            cfg = {"model": args.attacker_model, "ip": "localhost", "port": 8000}
         print(f"  Attacker: {cfg['model']} @ {cfg['ip']}:{cfg['port']}")
         attacker_llm = VLLMGenerateAdapter(cfg["model"], cfg["ip"], cfg["port"])
 

@@ -634,31 +634,31 @@ def main():
     parser.add_argument("--attack-model",          default="mlabonne/NeuralDaredevil-8B-abliterated")
     parser.add_argument("--attack-max-n-tokens",   type=int, default=500)
     parser.add_argument("--max-n-attack-attempts", type=int, default=5)
-    parser.add_argument("--attack-ip",             default="10.36.129.1")
+    parser.add_argument("--attack-ip",             default="localhost")
     parser.add_argument("--attack-port",           type=int, default=8000)
 
     # Target model (vicuna-13b @ DGX2:8000 — uses /v1/completions, no chat template)
     parser.add_argument("--target-model",          default="lmsys/vicuna-13b-v1.5")
     parser.add_argument("--target-max-n-tokens",   type=int, default=300)
-    parser.add_argument("--target-ip",             default="10.36.129.2")
+    parser.add_argument("--target-ip",             default="localhost")
     parser.add_argument("--target-port",           type=int, default=8000)
 
     # Judge: vLLM endpoint via direct HTTP
     parser.add_argument("--judge-model",           default="openai/gpt-oss-120b")
-    parser.add_argument("--judge-ip",              default="10.36.129.3")
+    parser.add_argument("--judge-ip",              default="localhost")
     parser.add_argument("--judge-port",            type=int, default=8000)
     parser.add_argument("--judge-max-n-tokens",    type=int, default=1024)
     parser.add_argument("--judge-temperature",     type=float, default=0)
 
     # LlamaGuard @ dgx2:8000
     parser.add_argument("--llamaguard-model",      default="meta-llama/Llama-Guard-3-8B")
-    parser.add_argument("--llamaguard-url",        default="http://10.36.129.1:8001/v1",
+    parser.add_argument("--llamaguard-url",        default="http://localhost:8001/v1",
                         help="vLLM endpoint for LlamaGuard")
 
     # LLMAAD reshaper
     parser.add_argument("--reshaper-model",        default="mlabonne/NeuralDaredevil-8B-abliterated",
                         help="Model used by LLMAAD algo1q reshaper")
-    parser.add_argument("--reshaper-ip",           default="10.36.129.1",
+    parser.add_argument("--reshaper-ip",           default="localhost",
                         help="IP of vLLM serving the reshaper model")
     parser.add_argument("--reshaper-port",         type=int, default=8000,
                         help="Port of vLLM serving the reshaper model")
