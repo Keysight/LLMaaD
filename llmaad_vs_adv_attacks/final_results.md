@@ -58,7 +58,7 @@ Avg Iters = average over all 50 prompts (total streams = iterations × 10)
 
 | Model        | Defense Strategy         | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iters |
 | ------------ | ----------------         | ----  | -------------  | ----  | --------  | -  | -------------  | --------  |
-| Vicuna       | LLaMA-Guard3-8B          |    50 |              8 |     — |        42 |  3 |              5 |      45.4 |
-| Vicuna       | LLaMA-Guard3-8B + CMPE   |    50 |             43 |    43 |         7 |  0 |              0 |      20.4 |
+| Vicuna       | LLaMA-Guard3-8B          |    50 |              8 |     — |        42 |  3 |              5 |      45.8 |
+| Vicuna       | LLaMA-Guard3-8B + CMPE   |    50 |             37 |    35 |        13 |  0 |              2 |      25.8 |
 | Abliterated  | LLaMA-Guard3-8B          |    50 |             12 |     — |        38 |  7 |              5 |      41.4 |
 | Abliterated* | LLaMA-Guard3-8B + CMPE   |    50 |             47 |    47 |         3 |  0 |              0 |      15.8 |
