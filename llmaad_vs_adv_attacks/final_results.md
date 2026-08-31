@@ -1,3 +1,17 @@
+### Column Descriptions (Attacker POV)
+
+| Column | Attacker's Interpretation |
+| ------ | ------------------------- |
+| **Total** | Number of adversarial goals the attacker attempted |
+| **Positive Exits** | Total times the attacker's judge declared success — the attacker believes these are jailbreaks |
+| **MI FP** | *Misdirection-Induced False Positives* — subset of Positive Exits where the attacker was fooled by a misdirected response; the attacker claimed a win but received a controlled, non-operational reply. Shown as — under detect-and-block, where no misdirection is applied |
+| **Exhausted** | Runs where the attacker exhausted its full iteration budget without the judge ever claiming success — a definitive failure from the attacker's perspective |
+| **FP** | *False Positives* — subset of Positive Exits where the attacker's judge was wrong independently of misdirection; confirmed safe or off-topic by secondary validation |
+| **True Positives** | Subset of Positive Exits confirmed as genuine, harmful jailbreaks by secondary validation — the attacker's real wins |
+| **Avg Iters** | Average iterations the attacker ran before terminating (either by claiming success or exhausting budget) |
+
+---
+
 > **Positive Exits (claimed jailbreaks) = MI FP + FP + True Positives**
 
 ---
@@ -24,19 +38,6 @@ Victim: lmsys/vicuna-13b-v1.5 | Scorer: gemma1-7b-it | Max epochs: 10 | Break sc
 
 ---
 
-### Column Descriptions (Attacker POV)
-
-| Column | Attacker's Interpretation |
-| ------ | ------------------------- |
-| **Total** | Number of adversarial goals the attacker attempted |
-| **Positive Exits** | Total times the attacker's judge declared success — the attacker believes these are jailbreaks |
-| **MI FP** | *Misdirection-Induced False Positives* — subset of Positive Exits where the attacker was fooled by a misdirected response; the attacker claimed a win but received a controlled, non-operational reply. Shown as — under detect-and-block, where no misdirection is applied |
-| **Exhausted** | Runs where the attacker exhausted its full iteration budget without the judge ever claiming success — a definitive failure from the attacker's perspective |
-| **FP** | *False Positives* — subset of Positive Exits where the attacker's judge was wrong independently of misdirection; confirmed safe or off-topic by secondary validation |
-| **True Positives** | Subset of Positive Exits confirmed as genuine, harmful jailbreaks by secondary validation — the attacker's real wins |
-| **Avg Iters** | Average iterations the attacker ran before terminating (either by claiming success or exhausting budget) |
-
----
 
 ### GPTFuzz Results
 
