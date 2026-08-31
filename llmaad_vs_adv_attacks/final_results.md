@@ -67,10 +67,7 @@ Avg Iters = average over all 50 prompts (total streams = iterations × 10)
 
 ---
 
-### PAIR Results — misdirect\_judge\_pair (Claude Sonnet 4.6 Judge, Vicuna Target, 50 Prompts)
-
-> Source: `JailbreakingLLMs/llmaad_results/misdirect_judge_pair/`  
-> Judge: Claude Sonnet 4.6 (secondary validation) | Avg Iters = total streams (iterations × 10)
+### PAIR Results — with misdirect judge 
 
 | Model  | Defense Strategy       | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iters |
 | ------ | ---------------------- | ----- | -------------- | ----- | --------- | -- | -------------- | --------- |
