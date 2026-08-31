@@ -188,9 +188,8 @@ Victim: lmsys/vicuna-13b-v1.5 | Scorer: gemma1-7b-it | Max epochs: 10 | Break sc
 | LLaMA-Guard3-8B + CMPE | 100   | 16             | 7     | 84        | 9  | 0              | 9.8            |
 
 
-### PAIR — Misdirection-Hardened Judge (Claude Sonnet 4.6, Vicuna Target, 50 prompts)
+### PAIR — Misdirection-Hardened Judge
 
-> Source: `JailbreakingLLMs/llmaad_results/misdirect_judge_pair/`
 
 | Model  | Defense Strategy       | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Streams |
 | ------ | ---------------------- | ----- | -------------- | ----- | --------- | -- | -------------- | ----------- |

@@ -67,7 +67,7 @@ Avg Iters = average over all 50 prompts (total streams = iterations × 10)
 
 ---
 
-### PAIR Results — with misdirect judge 
+### PAIR Results — Misdirection-Hardened Judge
 
 | Model  | Defense Strategy       | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iters |
 | ------ | ---------------------- | ----- | -------------- | ----- | --------- | -- | -------------- | --------- |
