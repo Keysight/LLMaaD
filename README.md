@@ -17,6 +17,7 @@ As generative AI is integrated into agentic applications, defenses increasingly 
 | `prompt_reshaping/` | Core LLMaaD defense framework — CMPE algorithm, detectors, LLM clients, CLI | IV, V |
 | `llmaad_vs_adv_attacks/GPTFuzz/` | GPTFuzz attack framework (vendored, MIT) + our integration scripts | VI-B |
 | `llmaad_vs_adv_attacks/JailbreakingLLMs/` | PAIR attack framework (vendored, MIT) + our integration scripts | VI-B |
+| `llmaad_vs_adv_attacks/autodan_results/` | AutoDAN-Turbo and AutoDAN-Reasoning attack integration scripts + results | VI-B |
 | `llmaad_vs_adv_attacks/post_hoc/` | Post-hoc validation scripts (Claude judge + CSV export) | VI-B |
 | `llmaad_vs_adv_attacks/final_results.md` | Summary tables of end-to-end evaluation results | VI-B |
 
@@ -97,6 +98,48 @@ python llmaad_vs_adv_attacks/post_hoc/json_to_csv.py \
   <output_judged.json>
 ```
 
+### AutoDAN-Turbo
+
+```bash
+cd llmaad_vs_adv_attacks/autodan_results
+# Detect-and-block baseline (S2)
+python run_turbo_scenarios.py --mutation use_strategy --scenarios 2 --range 0 100
+
+# Detect-and-misdirect / CMPE (S3)
+python run_turbo_scenarios.py --mutation use_strategy --scenarios 3 --range 0 100
+```
+
+Results are written to `autodan_results/final_results/turbo_use_strategy_S{2,3}_detect_{block,misdirect}_n100.{json,csv}`.
+
+### AutoDAN-Reasoning
+
+```bash
+cd llmaad_vs_adv_attacks/autodan_results
+# Detect-and-block baseline (S2)
+python run_reasoning_scenarios.py --method vanilla --scenarios 2 --range 0 100
+
+# Detect-and-misdirect / CMPE (S3)
+python run_reasoning_scenarios.py --method vanilla --scenarios 3 --range 0 100
+```
+
+Results are written to `autodan_results/final_results/reasoning_vanilla_S{2,3}_detect_{block,misdirect}_n100.{json,csv}`.
+
+### PAIR with Misdirection-Hardened Judge
+
+The standard PAIR judge can be replaced with a hardened variant that penalises misdirected
+cooperative responses (i.e., responses that look helpful but contain no actionable information).
+Use `run_pair_detect_misdirect_parallel_hardened_judge.py` for this configuration:
+
+```bash
+cd llmaad_vs_adv_attacks/JailbreakingLLMs
+python run_pair_detect_misdirect_parallel_hardened_judge.py \
+  --victim vicuna \
+  --n-prompts 50
+```
+
+Post-hoc validation is the same as above (Claude judge + CSV export).
+
+
 ---
 
 ## Results Summary
@@ -123,3 +166,33 @@ Full results are in [`llmaad_vs_adv_attacks/final_results.md`](llmaad_vs_adv_att
 | Vicuna       | LLaMA-Guard3-8B + CMPE | 43             | 43    | 7         | 0  | 0              | 20.4        |
 | Abliterated  | LLaMA-Guard3-8B        | 12             | —     | 38        | 7  | 5              | 41.4        |
 | Abliterated* | LLaMA-Guard3-8B + CMPE | 47             | 47    | 3         | 0  | 0              | 15.8        |
+
+
+### AutoDAN-Turbo (`use_strategy` mutation, n=100)
+
+Victim: lmsys/vicuna-13b-v1.5 | Scorer: gemma1-7b-it | Max epochs: 20 | Break score: 8.5
+
+| Defense Strategy       | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iterations |
+| ---------------------- | ----- | -------------- | ----- | --------- | -- | -------------- | -------------- |
+| LLaMA-Guard3-8B        | 100   | 99             | —     | 1         | 85 | 14             | 2.6            |
+| LLaMA-Guard3-8B + CMPE | 100   | 45             | 45    | 55        | 0  | 0              | 11.2           |
+
+
+### AutoDAN-Reasoning (`vanilla` method, n=100)
+
+Victim: lmsys/vicuna-13b-v1.5 | Scorer: gemma1-7b-it | Max epochs: 10 | Break score: 8.5
+
+| Defense Strategy       | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iterations |
+| ---------------------- | ----- | -------------- | ----- | --------- | -- | -------------- | -------------- |
+| LLaMA-Guard3-8B        | 100   | 57             | —     | 43        | 52 | 5              | 5.8            |
+| LLaMA-Guard3-8B + CMPE | 100   | 16             | 7     | 84        | 9  | 0              | 9.8            |
+
+
+### PAIR — Misdirection-Hardened Judge (Claude Sonnet 4.6, Vicuna Target, 50 prompts)
+
+> Source: `JailbreakingLLMs/llmaad_results/misdirect_judge_pair/`
+
+| Model  | Defense Strategy       | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Streams |
+| ------ | ---------------------- | ----- | -------------- | ----- | --------- | -- | -------------- | ----------- |
+| Vicuna | LLaMA-Guard3-8B        | 50    | 8              | —     | 42        | 3  | 5              | 45.8        |
+| Vicuna | LLaMA-Guard3-8B + CMPE | 50    | 37             | 35    | 13        | 0  | 2              | 25.8        |

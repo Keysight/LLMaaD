@@ -18,6 +18,8 @@ log_commands/
 
 # Scratch
 trash/
+/CLAUDE.md
+/MERGE_PLAN.md
 
 # Claude Code internal config
 .claude/
