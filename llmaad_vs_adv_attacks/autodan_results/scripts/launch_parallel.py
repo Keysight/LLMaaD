@@ -35,18 +35,18 @@ import argparse, datetime, json, os, re, subprocess, sys, time
 from pathlib import Path
 
 REPO    = Path(__file__).resolve().parents[3]
-_WORKING_REPO = Path("/mnt/c/Users/vivnamsa/llmaad_research")
-PYTHON  = _WORKING_REPO / ".llmaad" / "bin" / "python3"
+PYTHON  = REPO / ".llmaad" / "bin" / "python3"
+_AD     = REPO / "llmaad_vs_adv_attacks" / "autodan_results"
 SCRIPTS = {
-    "turbo":     REPO / "results_against_attacks" / "autodan_results" / "run_turbo_scenarios.py",
-    "reasoning": REPO / "results_against_attacks" / "autodan_results" / "run_reasoning_scenarios.py",
+    "turbo":     _AD / "run_turbo_scenarios.py",
+    "reasoning": _AD / "run_reasoning_scenarios.py",
 }
-MERGE   = REPO / "results_against_attacks" / "autodan_results" / "scripts" / "merge_turbo_results.py"
+MERGE   = _AD / "scripts" / "merge_turbo_results.py"
 LOG_DIRS = {
-    "turbo":     REPO / "results_against_attacks" / "autodan_results" / "turbo_scenarios" / "logs",
-    "reasoning": REPO / "results_against_attacks" / "autodan_results" / "reasoning_scenarios" / "logs",
+    "turbo":     _AD / "turbo_scenarios" / "logs",
+    "reasoning": _AD / "reasoning_scenarios" / "logs",
 }
-RUN_RESULTS = REPO / "results_against_attacks" / "autodan_results" / "run_results"
+RUN_RESULTS = _AD / "run_results"
 OUT_DIRS = {
     "turbo":     RUN_RESULTS,
     "reasoning": RUN_RESULTS,
@@ -59,13 +59,13 @@ CYAN   = "\033[96m"; BOLD  = "\033[1m";  RESET  = "\033[0m"; DIM = "\033[2m"
 # ── Default model configs ──────────────────────────────────────────────────
 
 DEFAULTS = {
-    "attacker_model":  "abliterated",
-    "target_model":    "vicuna",
+    "attacker_model":  "gemma",
+    "target_model":    "abliterated",
     "reshaping_model": "abliterated",
-    "scorer_model":    "gemma",
+    "scorer_model":    "oss120b",
     "chunk_size":      50,
 }
-TURBO_DEFAULTS     = {"mutation": "use_strategy", "algo": "algo1"}
+TURBO_DEFAULTS     = {"mutation": "use_strategy", "algo": "algo1q"}
 REASONING_DEFAULTS = {"method": "vanilla",        "algo": "algo1",
                       "best_of_n_N": 4, "beam_W": 4, "beam_C": 3, "beam_K": 10}
 
