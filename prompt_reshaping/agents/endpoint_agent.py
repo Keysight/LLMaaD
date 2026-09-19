@@ -17,26 +17,29 @@ import time
 import requests
 from .base import BaseAgent, AgentTask, AgentResult
 
-# Default vLLM node registry — mirrors model_pick.py LOCAL_VLLM_MODEL_PROFILES
+import os
+
+# Default vLLM node registry — mirrors model_pick.py LOCAL_VLLM_MODEL_PROFILES.
+# IPs read from environment variables; fall back to localhost for portability.
 DEFAULT_ENDPOINTS = {
     "vicuna": {
-        "ip":         "10.36.129.1",
-        "port":       8005,
+        "ip":         os.getenv("VICUNA_IP", "localhost"),
+        "port":       int(os.getenv("VICUNA_PORT", 8005)),
         "model_name": "lmsys/vicuna-7b-v1.3",
     },
     "abliterated": {
-        "ip":         "10.36.129.1",
-        "port":       8000,
+        "ip":         os.getenv("ABLITERATED_IP", "localhost"),
+        "port":       int(os.getenv("ABLITERATED_PORT", 8000)),
         "model_name": "mlabonne/NeuralDaredevil-8B-abliterated",
     },
     "gpt-oss": {
-        "ip":         "10.36.129.3",
-        "port":       8000,
+        "ip":         os.getenv("SCORER_IP", "localhost"),
+        "port":       int(os.getenv("SCORER_PORT", 8000)),
         "model_name": "openai/gpt-oss-120b",
     },
     "qwen3": {
-        "ip":         "10.36.129.2",
-        "port":       8000,
+        "ip":         os.getenv("QWEN3_IP", "localhost"),
+        "port":       int(os.getenv("QWEN3_PORT", 8000)),
         "model_name": "Qwen3-32B",
     },
 }

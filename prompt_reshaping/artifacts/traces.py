@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -6,8 +7,8 @@ from typing import Any, Dict, List, Optional, Tuple
 class ReshapingModelConfig:
     backend: str = "vllm"
     model_name: str = "mlabonne/NeuralDaredevil-8B-abliterated"
-    ip: Optional[str] = "10.36.129.1"
-    port: Optional[int] = 8000
+    ip: Optional[str] = os.getenv("ABLITERATED_IP", "localhost")
+    port: Optional[int] = int(os.getenv("ABLITERATED_PORT", 8000))
 
     def as_selector_kwargs(self) -> Dict[str, Any]:
         if self.backend == "vllm":

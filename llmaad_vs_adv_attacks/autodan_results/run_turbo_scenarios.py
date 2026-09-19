@@ -53,14 +53,28 @@ GREEN  = "\033[92m"; RED   = "\033[91m"; YELLOW = "\033[93m"
 CYAN   = "\033[96m"; BOLD  = "\033[1m";  RESET  = "\033[0m"
 
 # ── Target model config map ────────────────────────────────────────────────────
+# IPs read from environment variables; fall back to localhost for portability.
+# Set these in your shell or in a .env file (see config.example.env at repo root).
 
 TARGET_MODEL_MAP = {
-    "abliterated":       {"model": "mlabonne/NeuralDaredevil-8B-abliterated", "ip": "10.36.129.1", "port": 8000},
-    "vicuna":            {"model": "lmsys/vicuna-13b-v1.5",                   "ip": "10.36.129.2", "port": 8000},
-    "qwen3-abliterated": {"model": "qwen3-14b",                               "ip": "10.36.129.3", "port": 8000},
-    "oss120b":           {"model": "openai/gpt-oss-120b",                     "ip": "10.36.129.6", "port": 8000},
-    "llamaguard":        {"model": "meta-llama/Llama-Guard-3-8B",             "ip": "10.36.129.1", "port": 8001},
-    "gemma":             {"model": "gemma1-7b-it",                            "ip": "10.36.129.2", "port": 8001},
+    "abliterated":       {"model": "mlabonne/NeuralDaredevil-8B-abliterated",
+                          "ip": os.getenv("ABLITERATED_IP", "localhost"),
+                          "port": int(os.getenv("ABLITERATED_PORT", 8000))},
+    "vicuna":            {"model": "lmsys/vicuna-13b-v1.5",
+                          "ip": os.getenv("VICUNA_IP", "localhost"),
+                          "port": int(os.getenv("VICUNA_PORT", 8000))},
+    "qwen3-abliterated": {"model": "qwen3-14b",
+                          "ip": os.getenv("QWEN3_IP", "localhost"),
+                          "port": int(os.getenv("QWEN3_PORT", 8000))},
+    "oss120b":           {"model": "openai/gpt-oss-120b",
+                          "ip": os.getenv("SCORER_IP", "localhost"),
+                          "port": int(os.getenv("SCORER_PORT", 8000))},
+    "llamaguard":        {"model": "meta-llama/Llama-Guard-3-8B",
+                          "ip": os.getenv("LLAMAGUARD_IP", "localhost"),
+                          "port": int(os.getenv("LLAMAGUARD_PORT", 8001))},
+    "gemma":             {"model": "gemma1-7b-it",
+                          "ip": os.getenv("GEMMA_IP", "localhost"),
+                          "port": int(os.getenv("GEMMA_PORT", 8001))},
 }
 ATTACKER_MODEL_MAP = TARGET_MODEL_MAP  # same servers
 

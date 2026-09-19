@@ -28,6 +28,7 @@ trash/
 .env
 .env.local
 *.env
+!config.example.env
 
 # macOS metadata
 .DS_Store

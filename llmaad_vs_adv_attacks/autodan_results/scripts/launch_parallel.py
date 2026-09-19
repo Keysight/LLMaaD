@@ -157,7 +157,8 @@ def build_chunks(attack: str, total: int, chunk_size: int, scenarios: list[str],
                  attacker: str, target: str, reshaper: str, scorer: str,
                  mutation: str = None, method: str = None,
                  algo: str = "algo1", max_epochs: int = 0,
-                 llamaguard_ip: str = "10.36.129.1", llamaguard_port: int = 8001,
+                 llamaguard_ip: str = os.getenv("LLAMAGUARD_IP", "localhost"),
+                 llamaguard_port: int = int(os.getenv("LLAMAGUARD_PORT", 8001)),
                  start_offset: int = 0, **kwargs) -> list[dict]:
     script  = SCRIPTS[attack]
     ts      = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -461,10 +462,10 @@ def build_parser():
     p.add_argument("--algo",     default="algo1")
     p.add_argument("--max_epochs", type=int, default=0,
                    help="AutoDAN-Turbo S3 epochs per prompt (0 = use script default=20)")
-    p.add_argument("--llamaguard_ip",   default="10.36.129.1",
-                   help="LlamaGuard vLLM server IP (default: 10.36.129.1)")
-    p.add_argument("--llamaguard_port", type=int, default=8001,
-                   help="LlamaGuard vLLM server port (default: 8001)")
+    p.add_argument("--llamaguard_ip",   default=os.getenv("LLAMAGUARD_IP", "localhost"),
+                   help="LlamaGuard vLLM server IP (env: LLAMAGUARD_IP, default: localhost)")
+    p.add_argument("--llamaguard_port", type=int, default=int(os.getenv("LLAMAGUARD_PORT", 8001)),
+                   help="LlamaGuard vLLM server port (env: LLAMAGUARD_PORT, default: 8001)")
     p.add_argument("--parallel", type=int, default=0,
                    help="xargs -P worker count (default: min(chunks, 4))")
     p.add_argument("--dry_run",  action="store_true")

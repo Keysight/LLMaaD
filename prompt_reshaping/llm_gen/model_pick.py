@@ -1,33 +1,36 @@
+import os
 from typing import Dict, Optional
 from prompt_reshaping.llm_gen.clients import BaseLLMClient, VLLMChatClient, ChatRequest, OpenAIChatClient, GeminiChatClient
 
 
 DEFAULT_VLLM_PORT = 8000
+# IPs read from environment variables; fall back to localhost for portability.
+# Set these in your shell or source config.example.env at repo root.
 LOCAL_VLLM_MODEL_PROFILES = {
     "vicuna": {
-        "ip": "10.36.129.1",
+        "ip": os.getenv("VICUNA_IP", "localhost"),
         "model_name": "lmsys/vicuna-7b-v1.3",
-        "port": 8005,
+        "port": int(os.getenv("VICUNA_PORT", 8005)),
     },
     "abliterated": {
-        "ip": "10.36.129.1",
+        "ip": os.getenv("ABLITERATED_IP", "localhost"),
         "model_name": "mlabonne/NeuralDaredevil-8B-abliterated",
-        "port": DEFAULT_VLLM_PORT,
+        "port": int(os.getenv("ABLITERATED_PORT", DEFAULT_VLLM_PORT)),
     },
     "gpt-oss": {
-        "ip": "10.36.129.3",
+        "ip": os.getenv("SCORER_IP", "localhost"),
         "model_name": "openai/gpt-oss-120b",
-        "port": DEFAULT_VLLM_PORT,
+        "port": int(os.getenv("SCORER_PORT", DEFAULT_VLLM_PORT)),
     },
     "qwen3": {
-        "ip": "10.36.129.2",
+        "ip": os.getenv("QWEN3_IP", "localhost"),
         "model_name": "Qwen3-32B",
-        "port": DEFAULT_VLLM_PORT,
+        "port": int(os.getenv("QWEN3_PORT", DEFAULT_VLLM_PORT)),
     },
     "gemma": {
-        "ip": "10.36.129.2",
+        "ip": os.getenv("GEMMA_IP", "localhost"),
         "model_name": "gemma1-7b-it",
-        "port": 8001,
+        "port": int(os.getenv("GEMMA_PORT", 8001)),
     },
 }
 
