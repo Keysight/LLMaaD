@@ -1,5 +1,5 @@
 badge = "r"
-artifact_url = "https://github.com/Keysight/LLMaaD"
+artifact_url = "https://doi.org/10.5281/zenodo.22869768"
 cd = "b"
 citation = """
 @inproceedings{llmaad2026acsac,
