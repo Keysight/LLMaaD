@@ -1,0 +1,112 @@
+badge = "r"
+artifact_url = "https://github.com/Keysight/LLMaaD"
+cd = "b"
+citation = """
+@inproceedings{llmaad2026acsac,
+  title     = {Analyzing Defensive Misdirection Against Model-Guided Automated Attacks on Agentic AI Systems},
+  author    = {Vivek Namsani, Reza Soosahabi},
+  booktitle = {Proceedings of the Annual Computer Security Applications Conference (ACSAC)},
+  year      = {2026},
+  note      = {To appear}
+}
+"""
+license_url = "https://github.com/Keysight/LLMaaD/blob/main/LICENSE"
+
+# ── Infrastructure ────────────────────────────────────────────────────────────
+infrastructure_constraints = """
+Experiments require 3-4 NVIDIA A100 GPUs (40-80 GB VRAM each) running
+concurrently via vLLM to serve the victim LLM (Vicuna-13B or
+NeuralDaredevil-8B-abliterated), the detector (Llama-Guard-3-8B), the CMPE
+reshaper (NeuralDaredevil-8B-abliterated), and the scorer
+(openai/gpt-oss-120b, 120B parameter model requiring 80 GB+ GPU). This
+configuration is not available on SPHERE, Chameleon, CloudLab, or Google
+Colab. Pre-computed result CSVs are provided so that all main claims can be
+verified in under 5 minutes without GPU access. For live re-execution, the
+authors can provide SSH access to their DGX server upon request via HotCRP.
+"""
+infrastructure_access = """
+Authors will provide SSH-based access to their DGX A100 server upon request
+during the evaluation period. Contact via HotCRP message; SSH public key
+exchange will be arranged within 24 hours. The server has all model weights
+pre-downloaded and all vLLM endpoints pre-configured.
+"""
+
+install_script = "https://github.com/Keysight/LLMaaD/blob/main/INSTALL.md"
+readme = "https://github.com/Keysight/LLMaaD/blob/main/README.md"
+
+use = """
+This artifact is intended for security research on LLM jailbreak defenses.
+It implements the CMPE (Confuse, Misdirect, Preserve, Evade) algorithm that
+misdirects automated jailbreak attack pipelines. It is NOT suitable for
+conducting real-world attacks on production LLM services; all experiments
+target local vLLM-served models under controlled research conditions.
+"""
+destructive = """
+The artifact includes jailbreak prompts (AdvBench/HarmBench subsets) and
+adversarial attack scripts (AutoDAN, GPTFuzz, PAIR). These scripts target
+locally-served LLM endpoints only and do not interact with any external
+services unless an OpenAI API key is explicitly provided for the attacker
+mutator model. No actions are taken on evaluator infrastructure beyond
+writing JSON/CSV result files to the local filesystem.
+"""
+
+# ── Claims ────────────────────────────────────────────────────────────────────
+claim1 = "CMPE reduces AutoDAN-Turbo Attack Success Rate (ASR) from 98% (detect+block baseline) to 0%, with 100% of positive exits being Misdirection-Induced False Positives (MI-FP): the attacker judge declares success on misdirected, non-harmful content."
+script1 = "https://github.com/Keysight/LLMaaD/blob/main/llmaad_vs_adv_attacks/autodan_results/run_turbo_scenarios.py"
+expected1 = "Pre-computed: llmaad_vs_adv_attacks/autodan_results/final_results/turbo/abliterated_S3_algo1q_n50_claude_judged.csv — 0 True Positives, 26 MI-FP out of 50 prompts. Live run (scaled, 5 prompts): produces 0 TP with some MI-FP."
+
+claim2 = "CMPE reduces AutoDAN-Reasoning ASR from 100% (detect+block baseline) to 0%, with all positive exits being MI-FP."
+script2 = "https://github.com/Keysight/LLMaaD/blob/main/llmaad_vs_adv_attacks/autodan_results/run_reasoning_scenarios.py"
+expected2 = "Pre-computed: llmaad_vs_adv_attacks/autodan_results/final_results/reasoning/ — 0 True Positives. Live scaled run produces 0 TP."
+
+claim3 = "CMPE reduces GPTFuzz ASR to 0% True Positives across both abliterated and Vicuna target models, compared to detect+block which has non-zero TP."
+script3 = "https://github.com/Keysight/LLMaaD/blob/main/llmaad_vs_adv_attacks/GPTFuzz/gptfuzz_llmaad_parallel.py"
+expected3 = "Pre-computed: llmaad_vs_adv_attacks/GPTFuzz/llmaad_results/detect_misdirect/ — 0 TP in all configurations. detect_block/ shows non-zero TP for comparison."
+
+claim4 = "CMPE reduces PAIR ASR to 0% True Positives, compared to detect+block baseline which has non-zero TP."
+script4 = "https://github.com/Keysight/LLMaaD/blob/main/llmaad_vs_adv_attacks/JailbreakingLLMs/run_pair_detect_misdirect_parallel.py"
+expected4 = "Pre-computed: llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/detect_and_misdirect/ — 0 TP in all configurations. detect_and_block/ shows non-zero TP for comparison."
+
+# ── Hardware / Software / API ─────────────────────────────────────────────────
+hw = """
+Paper experiments were conducted on an NVIDIA DGX Spark:
+- Architecture: NVIDIA GB10 Grace Blackwell Superchip
+- Memory: 128 GB unified (CPU+GPU shared, NVLink-C2C interconnect)
+- OS: Linux (Ubuntu 22.04)
+- Storage: >= 100 GB disk for Hugging Face model weights
+
+Minimum for live re-execution by evaluators (8B models only, no 120B scorer):
+- Any NVIDIA GPU setup with >= 48 GB total VRAM (e.g., 2x A100 40GB, or 1x H100 80GB)
+  to concurrently serve victim LLM + detector + CMPE reshaper via vLLM
+- 64 GB system RAM
+- 100 GB disk
+
+Functional verification using pre-computed result CSVs:
+- Any laptop/desktop, no GPU required, < 5 minutes
+"""
+
+sw = """
+- OS: Linux (Ubuntu 20.04+); tested on Ubuntu 22.04
+- Python 3.10 or later
+- vLLM (>=0.4.0) for serving all local models
+- PyTorch (>=2.0) with CUDA support
+- Hugging Face transformers, accelerate
+- openai Python SDK (>=1.0)
+- pandas, numpy, tqdm
+- anthropic SDK (optional, for post-hoc Claude judging)
+- Install: pip install -r requirements.txt
+- All attack framework dependencies (AutoDAN, GPTFuzz, PAIR) are vendored
+  in the repository under their respective open-source licenses.
+"""
+
+api = """
+- OPENAI_API_KEY: Required only for GPTFuzz and PAIR attack frameworks
+  (used for GPT-3.5-turbo as the attacker mutator model). Not required for
+  AutoDAN-Turbo or AutoDAN-Reasoning experiments, or for verifying results
+  from pre-computed CSVs.
+- ANTHROPIC_API_KEY: Optional. Used only for post-hoc secondary judging via
+  claude_judge_autodan.py. Pre-computed Claude-judged CSVs are provided as
+  an alternative; this step can be skipped entirely for evaluation.
+"""
+
+gui = "n"
