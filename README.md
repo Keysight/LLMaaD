@@ -26,8 +26,8 @@ As generative AI is integrated into agentic applications, defenses increasingly 
 ## Installation
 
 ```bash
-git clone https://github.com/<org>/llmaad.git
-cd llmaad
+git clone https://github.com/Keysight/LLMaaD.git
+cd LLMaaD
 pip install -r requirements.txt
 ```
 
@@ -186,3 +186,28 @@ Attacker: gemma1-7b-it | Scorer: openai/gpt-oss-120b | Max epochs: 20 | Break sc
 | ------ | ---------------------- | ----- | -------------- | ----- | --------- | -- | -------------- | ----------- |
 | Vicuna | LLaMA-Guard3-8B        | 50    | 8              | —     | 42        | 3  | 5              | 45.8        |
 | Vicuna | LLaMA-Guard3-8B + CMPE | 50    | 37             | 35    | 13        | 0  | 2              | 25.8        |
+
+---
+
+## Claim-to-Artifact Mapping
+
+| Paper Claim (§VI-B) | Pre-computed Result File | Live Script |
+|---|---|---|
+| CMPE reduces AutoDAN-Turbo ASR to 0% (abliterated target) | `autodan_results/final_results/turbo/abliterated_S3_algo1q_n50_claude_judged.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3` |
+| CMPE reduces AutoDAN-Turbo ASR to 0% (vicuna target) | `autodan_results/final_results/turbo/vicuna_S3_algo1q_n50_claude_judged.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3 --target vicuna` |
+| Detect+block (S2) leaks true positives | `autodan_results/final_results/turbo/*_S2_*.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 2` |
+| CMPE reduces GPTFuzz ASR to 0% TP | `GPTFuzz/llmaad_results/detect_misdirect/` | `GPTFuzz/gptfuzz_llmaad_parallel.py --defense-mode detect-misdirect` |
+| CMPE reduces PAIR ASR to 0% TP | `JailbreakingLLMs/llmaad_results/detect_and_misdirect/` | `JailbreakingLLMs/run_pair_detect_misdirect_parallel.py` |
+| CMPE holds under hardened judge (PAIR) | `JailbreakingLLMs/llmaad_results/detect_and_misdirect_hardened/` | `JailbreakingLLMs/run_pair_detect_misdirect_parallel.py --judge hardened` |
+
+All pre-computed files include Claude-judged True Positive counts that directly support the ASR = 0% claims.
+
+---
+
+## Public Release
+
+This artifact is publicly available at:
+- **Permanent (DOI):** https://doi.org/10.5281/zenodo.22869768
+- **GitHub:** https://github.com/Keysight/LLMaaD
+
+The entire artifact as evaluated will remain publicly available after the ACSAC 2026 artifact evaluation period. All components — defense framework source code, attack integration scripts, pre-computed result CSVs, and post-hoc validation scripts — are released under the MIT License. The harmful behaviors dataset used for evaluation is a standard academic benchmark (AdvBench subset) already publicly available.

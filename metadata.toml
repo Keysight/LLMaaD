@@ -14,21 +14,21 @@ license_url = "https://github.com/Keysight/LLMaaD/blob/main/LICENSE"
 
 # ── Infrastructure ────────────────────────────────────────────────────────────
 infrastructure_constraints = """
-Experiments require 3-4 NVIDIA A100 GPUs (40-80 GB VRAM each) running
-concurrently via vLLM to serve the victim LLM (Vicuna-13B or
-NeuralDaredevil-8B-abliterated), the detector (Llama-Guard-3-8B), the CMPE
-reshaper (NeuralDaredevil-8B-abliterated), and the scorer
-(openai/gpt-oss-120b, 120B parameter model requiring 80 GB+ GPU). This
-configuration is not available on SPHERE, Chameleon, CloudLab, or Google
-Colab. Pre-computed result CSVs are provided so that all main claims can be
-verified in under 5 minutes without GPU access. For live re-execution, the
-authors can provide SSH access to their DGX server upon request via HotCRP.
+Experiments were conducted on 4x NVIDIA DGX Spark systems (GB10 Grace
+Blackwell Superchip, 128 GB unified memory each) running concurrently via
+vLLM to serve victim LLMs (Vicuna-13B, NeuralDaredevil-8B-abliterated),
+detector (Llama-Guard-3-8B), CMPE reshaper (NeuralDaredevil-8B-abliterated),
+and scorer (openai/gpt-oss-120b, MXFP4 quantized). This configuration is not
+available on SPHERE, Chameleon, CloudLab, or Google Colab. Pre-computed
+result CSVs are provided so that all main claims can be verified in under 5
+minutes without GPU access. For live re-execution, the authors can provide
+SSH access to their DGX Spark servers upon request via HotCRP.
 """
 infrastructure_access = """
-Authors will provide SSH-based access to their DGX A100 server upon request
+Authors will provide SSH-based access to their DGX Spark servers upon request
 during the evaluation period. Contact via HotCRP message; SSH public key
-exchange will be arranged within 24 hours. The server has all model weights
-pre-downloaded and all vLLM endpoints pre-configured.
+exchange will be arranged within 24 hours. All model weights are
+pre-downloaded and all vLLM endpoints are pre-configured on the servers.
 """
 
 install_script = "https://github.com/Keysight/LLMaaD/blob/main/INSTALL.md"
