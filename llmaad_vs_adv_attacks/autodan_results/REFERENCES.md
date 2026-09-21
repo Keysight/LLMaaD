@@ -19,6 +19,16 @@ from the official AutoDAN repositories.
 | Pre-trained strategy library | `logs_r/lifelong_strategy_library.pkl` | Loaded at runtime to supply mutation strategies for `use_strategy` and `find_new_strategy` mutations |
 | Harmful behaviors dataset | `data/harmful_behaviors.csv` (AdvBench) | Evaluation prompt set (500 goals) |
 
+> **Note:** `lifelong_strategy_library.pkl` and its JSON mirror (`lifelong_strategy_library.json`) are **not tracked in this repository** — they exceed GitHub's 100 MB file size limit. Pull them directly from the upstream AutoDAN-Turbo repo before running experiments:
+>
+> ```bash
+> # Download the pre-trained strategy library from AutoDAN-Turbo
+> curl -L -o llmaad_vs_adv_attacks/autodan_results/lifelong_strategy_library.pkl \
+>     https://raw.githubusercontent.com/XHMY/AutoDAN-Turbo/main/logs_r/lifelong_strategy_library.pkl
+> ```
+>
+> Our `run_turbo_scenarios.py` reads the `.pkl` at startup from `autodan_results/lifelong_strategy_library.pkl` and writes a human-readable `.json` mirror alongside it after each S3 run (strategy scores are updated live). Both files are listed in `.gitignore`.
+
 ### Logic taken verbatim
 
 | Element | Source location | Our file | Notes |
@@ -49,7 +59,7 @@ from the official AutoDAN repositories.
 
 | Asset | Path in repo | Usage |
 |-------|-------------|-------|
-| Pre-trained strategy library | `logs_r/lifelong_strategy_library.pkl` | Same library as Turbo — shared asset |
+| Pre-trained strategy library | `logs_r/lifelong_strategy_library.pkl` | Same library as Turbo — shared asset (see download instructions above) |
 
 ### Logic adapted
 
