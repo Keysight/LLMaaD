@@ -201,13 +201,3 @@ Attacker: gemma1-7b-it | Scorer: openai/gpt-oss-120b | Max epochs: 20 | Break sc
 | CMPE holds under hardened judge (PAIR) | `JailbreakingLLMs/llmaad_results/detect_and_misdirect_hardened/` | `JailbreakingLLMs/run_pair_detect_misdirect_parallel.py --judge hardened` |
 
 All pre-computed files include Claude-judged True Positive counts that directly support the ASR = 0% claims.
-
----
-
-## Public Release
-
-This artifact is publicly available at:
-- **Permanent (DOI):** https://doi.org/10.5281/zenodo.22869768
-- **GitHub:** https://github.com/Keysight/LLMaaD
-
-The entire artifact as evaluated will remain publicly available after the ACSAC 2026 artifact evaluation period. All components — defense framework source code, attack integration scripts, pre-computed result CSVs, and post-hoc validation scripts — are released under the MIT License. The harmful behaviors dataset used for evaluation is a standard academic benchmark (AdvBench subset) already publicly available.

@@ -10,7 +10,6 @@ citation = """
   note      = {To appear}
 }
 """
-license_url = "https://github.com/Keysight/LLMaaD/blob/main/LICENSE"
 
 # ── Infrastructure ────────────────────────────────────────────────────────────
 infrastructure_constraints = """
