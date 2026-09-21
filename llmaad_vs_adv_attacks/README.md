@@ -40,37 +40,75 @@ llmaad_vs_adv_attacks/
 
 All experiments use the following model stack (served locally via vLLM):
 
-| Role | Model | Endpoint |
-|------|-------|----------|
-| Victim (primary) | lmsys/vicuna-13b-v1.5 | 10.36.129.2:8000 |
-| Victim (secondary) | mlabonne/NeuralDaredevil-8B-abliterated | 10.36.129.1:8000 |
-| Attacker / Mutator | gemma1-7b-it (AutoDAN) · mlabonne/NeuralDaredevil-8B-abliterated (PAIR/GPTFuzz) | varies |
-| Scorer / Judge | openai/gpt-oss-120b | 10.36.129.6:8000 |
-| Defender (detection) | meta-llama/Llama-Guard-3-8B | 10.36.129.1:8001 |
-| Reshaper (CMPE) | mlabonne/NeuralDaredevil-8B-abliterated | 10.36.129.1:8000 |
+| Role | Model |
+|------|-------|
+| Victim (primary) | lmsys/vicuna-13b-v1.5 |
+| Victim (secondary) | mlabonne/NeuralDaredevil-8B-abliterated |
+| Attacker / Mutator | gemma1-7b-it (AutoDAN) · mlabonne/NeuralDaredevil-8B-abliterated (PAIR/GPTFuzz) |
+| Scorer / Judge | openai/gpt-oss-120b |
+| Defender (detection) | meta-llama/Llama-Guard-3-8B |
+| Reshaper (CMPE) | mlabonne/NeuralDaredevil-8B-abliterated |
 
-Endpoints are read from environment variables at runtime (see `run_turbo_scenarios.py` and each PAIR script for variable names).
+Model endpoints (IPs and ports) are configured via environment variables at runtime — see each script's `--help` output or the `TARGET_MODEL_MAP` / argument defaults inside `run_turbo_scenarios.py` and `run_reasoning_scenarios.py` for the variable names.
 
-## Running AutoDAN-Turbo Experiments
+## Running AutoDAN Experiments
 
-Run from the **repo root** using the parallel launcher:
+### Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `autodan_results/run_turbo_scenarios.py` | AutoDAN-Turbo S2/S3 runner — handles warm_up, use_strategy, find_new_strategy mutations; integrates LlamaGuard + CMPE algo1q; saves strategy library after each S3 run |
+| `autodan_results/run_reasoning_scenarios.py` | AutoDAN-Reasoning S2/S3 runner — implements vanilla, best-of-N, and beam-search attack methods against the same S2/S3 scenario architecture |
+| `autodan_results/scripts/launch_parallel.py` | Splits the prompt range into chunks and launches scenario runners in parallel subprocesses; supports both turbo and reasoning attacks |
+| `autodan_results/scripts/merge_turbo_results.py` | Merges per-chunk JSON outputs into a single result file with summary table and CSV export |
+
+Both scenario runners accept `--help` for the full argument list. Key shared flags:
+
+```
+--target        victim model alias (vicuna | abliterated | qwen3-abliterated | oss120b)
+--scenarios     which scenarios to run (2 = detect-block, 3 = detect-misdirect)
+--range         prompt index range, e.g. 0 50
+--algo          CMPE algorithm for S3 (algo1 | algo1q | algo2)  [default: algo1q]
+--scorer_model  scoring/judge model alias                        [default: oss120b]
+--out_dir       output directory for result JSONs
+```
+
+### Running via the parallel launcher (recommended)
+
+Run from the **repo root**:
 
 ```bash
-# S2 — detect-and-block, vicuna target, 50 prompts, chunks of 5
+# AutoDAN-Turbo — S2 (detect-block), vicuna target, 50 prompts, chunks of 5
 .llmaad/bin/python3 llmaad_vs_adv_attacks/autodan_results/scripts/launch_parallel.py \
     --attack turbo --mutation use_strategy --scenarios 2 --total 50 \
     --target vicuna --chunk_size 5
 
-# S3 — detect-and-misdirect (CMPE), vicuna target
+# AutoDAN-Turbo — S3 (detect-misdirect / CMPE), vicuna target
 .llmaad/bin/python3 llmaad_vs_adv_attacks/autodan_results/scripts/launch_parallel.py \
     --attack turbo --mutation use_strategy --scenarios 3 --total 50 \
     --target vicuna --chunk_size 5
 
 # Repeat with --target abliterated for the second victim model
 
+# AutoDAN-Reasoning — S2 + S3, vicuna target
+.llmaad/bin/python3 llmaad_vs_adv_attacks/autodan_results/scripts/launch_parallel.py \
+    --attack reasoning --scenarios 2 3 --total 50 --target vicuna --chunk_size 5
+
 # Dry-run: print chunk commands without executing
 .llmaad/bin/python3 llmaad_vs_adv_attacks/autodan_results/scripts/launch_parallel.py \
     --attack turbo --dry_run
+```
+
+### Running a single scenario directly
+
+```bash
+# Turbo S3, prompts 0–10, vicuna target
+.llmaad/bin/python3 llmaad_vs_adv_attacks/autodan_results/run_turbo_scenarios.py \
+    --mutation use_strategy --scenarios 3 --range 0 10 --target vicuna
+
+# Reasoning S2, prompts 0–50, abliterated target
+.llmaad/bin/python3 llmaad_vs_adv_attacks/autodan_results/run_reasoning_scenarios.py \
+    --method vanilla --scenarios 2 --range 0 50 --target abliterated
 ```
 
 Results land in `autodan_results/run_results/`. Apply Claude judging after:
@@ -84,9 +122,9 @@ export ANTHROPIC_FOUNDRY_RESOURCE=<resource-name>
     autodan_results/llmaad_results/turbo/<result>_claude_judged.json
 ```
 
-See [`autodan_results/REFERENCES.md`](autodan_results/REFERENCES.md) for attribution of AutoDAN assets used.
+> **Strategy library:** `lifelong_strategy_library.pkl` is required for `use_strategy` and `find_new_strategy` mutations but is not tracked in this repo (>100 MB). See [`autodan_results/REFERENCES.md`](autodan_results/REFERENCES.md) for the download command.
 
-> **AutoDAN-Reasoning:** Two experimental runs were conducted but could not be used for the final paper due to invalid threat model configurations and a merge bug (see [`autodan_results/llmaad_results/reasoning/ISSUES_gemma_attacker_judge.md`](autodan_results/llmaad_results/reasoning/ISSUES_gemma_attacker_judge.md)).
+> **AutoDAN-Reasoning:** Two experimental runs were conducted but could not be used for the final paper due to invalid threat model configurations and a merge bug. See [`autodan_results/llmaad_results/reasoning/ISSUES_gemma_attacker_judge.md`](autodan_results/llmaad_results/reasoning/ISSUES_gemma_attacker_judge.md) for details.
 
 ## Running GPTFuzz Experiments
 
@@ -118,10 +156,10 @@ python run_pair.py --mode detect-misdirect --num-prompts 50
 # Detect-and-misdirect (misdirection-hardened judge)
 python run_pair.py --mode detect-misdirect --judge hardened --num-prompts 50
 
-# Abliterated target
+# Abliterated target (set --target-ip/--target-port to match your vLLM serving setup)
 python run_pair.py --mode detect-misdirect \
     --target-model mlabonne/NeuralDaredevil-8B-abliterated \
-    --target-ip 10.36.129.1 --num-prompts 50
+    --num-prompts 50
 
 # Dry-run all modes to preview commands
 python run_pair.py --mode all --judge both --dry-run
