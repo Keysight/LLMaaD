@@ -16,25 +16,17 @@
 
 ---
 
-### AutoDAN-Turbo Results (`use_strategy` mutation, n=100)
+### AutoDAN-Turbo Results (`use_strategy` mutation, n=50, algo1q)
 
-Victim: lmsys/vicuna-13b-v1.5 | Scorer: gemma1-7b-it | Max epochs: 20 | Break score: 8.5
+Attacker: gemma1-7b-it | Scorer: openai/gpt-oss-120b | Max epochs: 20 | Break score: 8.5
 
-| Defense Strategy | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iters |
-| ---------------- | ----- | -------------- | ----- | --------- | -- | -------------- | --------- |
-| LLaMA-Guard3-8B | 100 | 99 | — | 1 | 85 | 14 | 2.6 |
-| LLaMA-Guard3-8B + CMPE | 100 | 45 | 45 | 55 | 0 | 0 | 11.2 |
+| Model       | Defense Strategy       | Total | Positive Exits | MI False Positives | Exhausted | False Positives | True Positives | Avg Iters |
+| ----------- | ---------------------- | ----- | -------------- | ------------------ | --------- | --------------- | -------------- | --------- |
+| Vicuna      | LLaMA-Guard3-8B        |    50 |              6 |                  — |        44 |               3 |              3 |      18.8 |
+| Vicuna      | LLaMA-Guard3-8B + CMPE |    50 |              5 |                  5 |        45 |               0 |              0 |      19.2 |
+| Abliterated | LLaMA-Guard3-8B        |    50 |             13 |                  — |        37 |               5 |              8 |      16.3 |
+| Abliterated | LLaMA-Guard3-8B + CMPE |    50 |             26 |                 26 |        24 |               0 |              0 |      13.0 |
 
----
-
-### AutoDAN-Reasoning Results (`vanilla` method, n=100)
-
-Victim: lmsys/vicuna-13b-v1.5 | Scorer: gemma1-7b-it | Max epochs: 10 | Break score: 8.5
-
-| Defense Strategy | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iters |
-| ---------------- | ----- | -------------- | ----- | --------- | -- | -------------- | --------- |
-| LLaMA-Guard3-8B | 100 | 57 | — | 43 | 52 | 5 | 5.8 |
-| LLaMA-Guard3-8B + CMPE | 100 | 16 | 7 | 84 | 9 | 0 | 9.8 |
 
 ---
 

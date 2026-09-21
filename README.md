@@ -100,41 +100,41 @@ python llmaad_vs_adv_attacks/post_hoc/json_to_csv.py \
 
 ### AutoDAN-Turbo
 
-```bash
-cd llmaad_vs_adv_attacks/autodan_results
-# Detect-and-block baseline (S2)
-python run_turbo_scenarios.py --mutation use_strategy --scenarios 2 --range 0 100
-
-# Detect-and-misdirect / CMPE (S3)
-python run_turbo_scenarios.py --mutation use_strategy --scenarios 3 --range 0 100
-```
-
-Results are written to `autodan_results/final_results/turbo_use_strategy_S{2,3}_detect_{block,misdirect}_n100.{json,csv}`.
-
-### AutoDAN-Reasoning
+Use the parallel launcher from the repo root (`--target` selects the victim model):
 
 ```bash
-cd llmaad_vs_adv_attacks/autodan_results
-# Detect-and-block baseline (S2)
-python run_reasoning_scenarios.py --method vanilla --scenarios 2 --range 0 100
+# S2 — detect-and-block, vicuna target, 50 prompts
+.llmaad/bin/python3 llmaad_vs_adv_attacks/autodan_results/scripts/launch_parallel.py \
+    --attack turbo --mutation use_strategy --scenarios 2 --total 50 --target vicuna
 
-# Detect-and-misdirect / CMPE (S3)
-python run_reasoning_scenarios.py --method vanilla --scenarios 3 --range 0 100
+# S3 — detect-and-misdirect (CMPE), vicuna target
+.llmaad/bin/python3 llmaad_vs_adv_attacks/autodan_results/scripts/launch_parallel.py \
+    --attack turbo --mutation use_strategy --scenarios 3 --total 50 --target vicuna
+
+# Repeat with --target abliterated for the second victim model
 ```
 
-Results are written to `autodan_results/final_results/reasoning_vanilla_S{2,3}_detect_{block,misdirect}_n100.{json,csv}`.
+Results land in `llmaad_vs_adv_attacks/autodan_results/run_results/`; Claude-judged finals are in
+`llmaad_vs_adv_attacks/autodan_results/llmaad_results/turbo/`.
 
-### PAIR with Misdirection-Hardened Judge
+### PAIR
 
-The standard PAIR judge can be replaced with a hardened variant that penalises misdirected
-cooperative responses (i.e., responses that look helpful but contain no actionable information).
-Use `run_pair_detect_misdirect_parallel_hardened_judge.py` for this configuration:
+A unified launcher covers all five PAIR script variants:
 
 ```bash
 cd llmaad_vs_adv_attacks/JailbreakingLLMs
-python run_pair_detect_misdirect_parallel_hardened_judge.py \
-  --victim vicuna \
-  --n-prompts 50
+
+# Detect-and-block (standard judge)
+python run_pair.py --mode detect-block --num-prompts 50
+
+# Detect-and-misdirect (standard judge)
+python run_pair.py --mode detect-misdirect --num-prompts 50
+
+# Detect-and-misdirect (hardened judge)
+python run_pair.py --mode detect-misdirect --judge hardened --num-prompts 50
+
+# All modes in sequence, dry-run first
+python run_pair.py --mode all --judge both --dry-run
 ```
 
 Post-hoc validation is the same as above (Claude judge + CSV export).
@@ -168,28 +168,19 @@ Full results are in [`llmaad_vs_adv_attacks/final_results.md`](llmaad_vs_adv_att
 | Abliterated* | LLaMA-Guard3-8B + CMPE | 47             | 47    | 3         | 0  | 0              | 15.8        |
 
 
-### AutoDAN-Turbo (`use_strategy` mutation, n=100)
+### AutoDAN-Turbo (`use_strategy` mutation, n=50 per target, algo1q)
 
-Victim: lmsys/vicuna-13b-v1.5 | Scorer: gemma1-7b-it | Max epochs: 20 | Break score: 8.5
+Attacker: gemma1-7b-it | Scorer: openai/gpt-oss-120b | Max epochs: 20 | Break score: 8.5
 
-| Defense Strategy       | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iterations |
-| ---------------------- | ----- | -------------- | ----- | --------- | -- | -------------- | -------------- |
-| LLaMA-Guard3-8B        | 100   | 99             | —     | 1         | 85 | 14             | 2.6            |
-| LLaMA-Guard3-8B + CMPE | 100   | 45             | 45    | 55        | 0  | 0              | 11.2           |
-
-
-### AutoDAN-Reasoning (`vanilla` method, n=100)
-
-Victim: lmsys/vicuna-13b-v1.5 | Scorer: gemma1-7b-it | Max epochs: 10 | Break score: 8.5
-
-| Defense Strategy       | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iterations |
-| ---------------------- | ----- | -------------- | ----- | --------- | -- | -------------- | -------------- |
-| LLaMA-Guard3-8B        | 100   | 57             | —     | 43        | 52 | 5              | 5.8            |
-| LLaMA-Guard3-8B + CMPE | 100   | 16             | 7     | 84        | 9  | 0              | 9.8            |
+| Model       | Defense Strategy       | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Iterations |
+| ----------- | ---------------------- | ----- | -------------- | ----- | --------- | -- | -------------- | -------------- |
+| Vicuna      | LLaMA-Guard3-8B        | 50    | 6              | —     | 44        | 3  | 3              | 18.8           |
+| Vicuna      | LLaMA-Guard3-8B + CMPE | 50    | 5              | 5     | 45        | 0  | 0              | 19.2           |
+| Abliterated | LLaMA-Guard3-8B        | 50    | 13             | —     | 37        | 5  | 8              | 16.3           |
+| Abliterated | LLaMA-Guard3-8B + CMPE | 50    | 26             | 26    | 24        | 0  | 0              | 13.0           |
 
 
 ### PAIR — Misdirection-Hardened Judge
-
 
 | Model  | Defense Strategy       | Total | Positive Exits | MI FP | Exhausted | FP | True Positives | Avg Streams |
 | ------ | ---------------------- | ----- | -------------- | ----- | --------- | -- | -------------- | ----------- |

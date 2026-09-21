@@ -1,121 +1,158 @@
 # End-to-End Adversarial Evaluation Harness
 
-This directory contains the evaluation harness for testing the LLMaaD detect-and-misdirect defense against three state-of-the-art model-guided attack frameworks: **AutoDAN** (Turbo + Reasoning), **GPTFuzz**, and **PAIR**.
+This directory contains the evaluation harness for testing the LLMaaD detect-and-misdirect defense against three state-of-the-art model-guided attack frameworks: **AutoDAN-Turbo**, **GPTFuzz**, and **PAIR**.
 
 ## Directory Structure
 
 ```
 llmaad_vs_adv_attacks/
-├── autodan_results/                          # AutoDAN-Turbo + AutoDAN-Reasoning integration
+├── autodan_results/                          # AutoDAN-Turbo integration
 │   ├── run_turbo_scenarios.py                # AutoDAN-Turbo S2/S3 scenario runner
-│   ├── run_reasoning_scenarios.py            # AutoDAN-Reasoning S2/S3 scenario runner
+│   ├── run_reasoning_scenarios.py            # AutoDAN-Reasoning S2/S3 runner (experimental)
 │   ├── scripts/
-│   │   ├── launch_parallel.py               # Parallel chunk launcher
-│   │   └── merge_turbo_results.py           # Merge chunks → CSV + summary JSON
-│   ├── final_results/                        # Final experiment results (n=100, claude-judged)
+│   │   ├── launch_parallel.py               # Parallel chunk launcher (turbo + reasoning)
+│   │   └── merge_turbo_results.py           # Merge chunk JSONs → CSV + summary JSON
+│   ├── llmaad_results/
+│   │   ├── turbo/                           # Final turbo results (n=50, claude-judged)
+│   │   └── reasoning/                       # Reasoning results + ISSUES doc
 │   └── REFERENCES.md                         # Attribution for AutoDAN assets used
-├── GPTFuzz/                                  # GPTFuzz framework (vendored, MIT) + our integration
+├── GPTFuzz/                                  # GPTFuzz framework (vendored, MIT) + integration
 │   ├── gptfuzz_llmaad_parallel.py            # Main integration script (parallel, 50 prompts)
 │   ├── llmaad_results/                       # Final experiment results (claude-judged)
 │   └── [upstream GPTFuzz code]
-├── JailbreakingLLMs/                         # PAIR framework (vendored, MIT) + our integration
-│   ├── run_pair_detect_block_parallel.py     # PAIR with detect-and-block defense
-│   ├── run_pair_detect_misdirect_parallel.py # PAIR with detect-and-misdirect defense
-│   ├── system_prompts.py                     # Victim model system prompts
+├── JailbreakingLLMs/                         # PAIR framework (vendored, MIT) + integration
+│   ├── run_pair.py                           # Unified PAIR launcher (all 5 modes)
+│   ├── run_pair_baseline_parallel.py         # PAIR baseline (no defense)
+│   ├── run_pair_detect_block_parallel.py     # PAIR + detect-and-block
+│   ├── run_pair_detect_misdirect_parallel.py # PAIR + detect-and-misdirect (CMPE)
+│   ├── run_pair_detect_block_parallel_hardened_judge.py
+│   ├── run_pair_detect_misdirect_parallel_hardened_judge.py
+│   ├── system_prompts.py                     # Standard + misdirection-aware judge prompts
 │   ├── llmaad_results/                       # Final experiment results (claude-judged)
 │   └── [upstream JailbreakingLLMs code]
 ├── post_hoc/                                 # Post-hoc validation and analysis
-│   ├── claude_judge_attack_jailbreaks.py     # Secondary LLM judge (Claude Sonnet)
-│   └── json_to_csv.py                        # Export results to CSV
-└── final_results.md                          # Summary tables (paper VI-B)
+│   ├── claude_judge_autodan.py               # Claude judge for AutoDAN results
+│   └── claude_judge_attack_jailbreaks.py     # Claude judge for GPTFuzz/PAIR results
+└── final_results.md                          # Summary tables (paper §VI-B)
 ```
 
 ## Model Configuration
 
 All experiments use the following model stack (served locally via vLLM):
 
-| Role | Model |
-|------|-------|
-| Victim (primary) | lmsys/vicuna-13b-v1.5 |
-| Victim (secondary) | mlabonne/NeuralDaredevil-8B-abliterated |
-| Mutator / Attacker | gpt-3.5-turbo (GPTFuzz/PAIR) · mlabonne/NeuralDaredevil-8B-abliterated (AutoDAN) |
-| Defender | meta-llama/Llama-Guard-3-8B |
-| Reshaper (CMPE) | mlabonne/NeuralDaredevil-8B-abliterated |
-| Scorer (AutoDAN) | gemma1-7b-it |
+| Role | Model | Endpoint |
+|------|-------|----------|
+| Victim (primary) | lmsys/vicuna-13b-v1.5 | 10.36.129.2:8000 |
+| Victim (secondary) | mlabonne/NeuralDaredevil-8B-abliterated | 10.36.129.1:8000 |
+| Attacker / Mutator | gemma1-7b-it (AutoDAN) · mlabonne/NeuralDaredevil-8B-abliterated (PAIR/GPTFuzz) | varies |
+| Scorer / Judge | openai/gpt-oss-120b | 10.36.129.6:8000 |
+| Defender (detection) | meta-llama/Llama-Guard-3-8B | 10.36.129.1:8001 |
+| Reshaper (CMPE) | mlabonne/NeuralDaredevil-8B-abliterated | 10.36.129.1:8000 |
 
-## Running AutoDAN Experiments
+Endpoints are read from environment variables at runtime (see `run_turbo_scenarios.py` and each PAIR script for variable names).
+
+## Running AutoDAN-Turbo Experiments
+
+Run from the **repo root** using the parallel launcher:
 
 ```bash
-# AutoDAN-Turbo: S2 (detect-block) + S3 (detect-misdirect), 100 prompts
-.llmaad/bin/python3 autodan_results/scripts/launch_parallel.py \
-    --attack turbo --mutation use_strategy --scenarios 2 3 --total 100
+# S2 — detect-and-block, vicuna target, 50 prompts, chunks of 5
+.llmaad/bin/python3 llmaad_vs_adv_attacks/autodan_results/scripts/launch_parallel.py \
+    --attack turbo --mutation use_strategy --scenarios 2 --total 50 \
+    --target vicuna --chunk_size 5
 
-# AutoDAN-Reasoning: S2 + S3, 100 prompts
-.llmaad/bin/python3 autodan_results/scripts/launch_parallel.py \
-    --attack reasoning --scenarios 2 3 --total 100
+# S3 — detect-and-misdirect (CMPE), vicuna target
+.llmaad/bin/python3 llmaad_vs_adv_attacks/autodan_results/scripts/launch_parallel.py \
+    --attack turbo --mutation use_strategy --scenarios 3 --total 50 \
+    --target vicuna --chunk_size 5
 
-# Merge results after run
-.llmaad/bin/python3 autodan_results/scripts/merge_turbo_results.py \
-    --in_dir autodan_results/final_results \
-    --out_dir autodan_results/final_results \
-    --out_prefix turbo_use_strategy_S2_detect_block_n100 \
-    --tag turbo_use_strategy_S2_detect_block
+# Repeat with --target abliterated for the second victim model
+
+# Dry-run: print chunk commands without executing
+.llmaad/bin/python3 llmaad_vs_adv_attacks/autodan_results/scripts/launch_parallel.py \
+    --attack turbo --dry_run
+```
+
+Results land in `autodan_results/run_results/`. Apply Claude judging after:
+
+```bash
+export ANTHROPIC_FOUNDRY_API_KEY=<key>
+export ANTHROPIC_FOUNDRY_RESOURCE=<resource-name>
+
+.llmaad/bin/python3 llmaad_vs_adv_attacks/post_hoc/claude_judge_autodan.py \
+    autodan_results/run_results/<result>.json \
+    autodan_results/llmaad_results/turbo/<result>_claude_judged.json
 ```
 
 See [`autodan_results/REFERENCES.md`](autodan_results/REFERENCES.md) for attribution of AutoDAN assets used.
+
+> **AutoDAN-Reasoning:** Two experimental runs were conducted but could not be used for the final paper due to invalid threat model configurations and a merge bug (see [`autodan_results/llmaad_results/reasoning/ISSUES_gemma_attacker_judge.md`](autodan_results/llmaad_results/reasoning/ISSUES_gemma_attacker_judge.md)).
 
 ## Running GPTFuzz Experiments
 
 ```bash
 cd GPTFuzz
-export OPENAI_API_KEY=<your-key>
 
 # detect-and-block
-python gptfuzz_llmaad_parallel.py --defense-mode detect-block --victim vicuna --n-prompts 50
+python gptfuzz_llmaad_parallel.py --defense-mode detect-block \
+    --victim vicuna --n-prompts 50
 
 # detect-and-misdirect
-python gptfuzz_llmaad_parallel.py --defense-mode detect-misdirect --victim vicuna --n-prompts 50
+python gptfuzz_llmaad_parallel.py --defense-mode detect-misdirect \
+    --victim vicuna --n-prompts 50
 ```
 
 ## Running PAIR Experiments
 
+Use `run_pair.py` to launch any of the five PAIR variants:
+
 ```bash
 cd JailbreakingLLMs
-export OPENAI_API_KEY=<your-key>
 
-# detect-and-block
-python run_pair_detect_block_parallel.py --victim vicuna --n-prompts 50
+# Detect-and-block (standard judge), vicuna target
+python run_pair.py --mode detect-block --num-prompts 50
 
-# detect-and-misdirect
-python run_pair_detect_misdirect_parallel.py --victim vicuna --n-prompts 50
+# Detect-and-misdirect (standard judge)
+python run_pair.py --mode detect-misdirect --num-prompts 50
+
+# Detect-and-misdirect (misdirection-hardened judge)
+python run_pair.py --mode detect-misdirect --judge hardened --num-prompts 50
+
+# Abliterated target
+python run_pair.py --mode detect-misdirect \
+    --target-model mlabonne/NeuralDaredevil-8B-abliterated \
+    --target-ip 10.36.129.1 --num-prompts 50
+
+# Dry-run all modes to preview commands
+python run_pair.py --mode all --judge both --dry-run
 ```
+
+Individual scripts (`run_pair_detect_block_parallel.py`, etc.) can also be called directly with the same arguments.
 
 ## Post-Hoc Validation
 
-After collecting raw results, apply secondary Claude judging and export to CSV:
+After collecting raw results, apply secondary Claude judging:
 
 ```bash
-export ANTHROPIC_API_KEY=<your-key>
-# Optional for Azure endpoint:
-# export ANTHROPIC_BASE_URL=https://<resource>.services.ai.azure.com/anthropic/
+export ANTHROPIC_FOUNDRY_API_KEY=<key>
+export ANTHROPIC_FOUNDRY_RESOURCE=<resource-name>
 
-# Step 1: Claude judge
-python post_hoc/claude_judge_attack_jailbreaks.py \
-  GPTFuzz/llmaad_results/llamaguard/<result>.json \
-  GPTFuzz/llmaad_results/llamaguard/claude_judged/<result>_claude_judged.json
+# AutoDAN results
+.llmaad/bin/python3 post_hoc/claude_judge_autodan.py \
+    autodan_results/run_results/<result>.json \
+    autodan_results/llmaad_results/turbo/<result>_claude_judged.json
 
-# Step 2: Export to CSV
-python post_hoc/json_to_csv.py \
-  GPTFuzz/llmaad_results/llamaguard/claude_judged/<result>_claude_judged.json
+# GPTFuzz / PAIR results
+.llmaad/bin/python3 post_hoc/claude_judge_attack_jailbreaks.py \
+    JailbreakingLLMs/llmaad_results/<result>.json \
+    JailbreakingLLMs/llmaad_results/<result>_claude_judged.json
 ```
-
-See [`post_hoc/README.md`](post_hoc/README.md) for details.
 
 ## Results
 
 Validated experiment results are stored in:
-- `autodan_results/final_results/` — 8 files (2 attacks × 2 defense modes × n=100, JSON + CSV)
-- `GPTFuzz/llmaad_results/llamaguard/claude_judged/` — 4 JSON files (2 models × 2 defense modes)
-- `JailbreakingLLMs/llmaad_results/llamaguard/claude_judged/` — 4 JSON files
+- `autodan_results/llmaad_results/turbo/` — 4 JSON + 4 CSV files (vicuna + abliterated, S2 + S3, n=50)
+- `GPTFuzz/llmaad_results/` — detect-block + detect-misdirect results for vicuna + abliterated
+- `JailbreakingLLMs/llmaad_results/` — detect-block + detect-misdirect + hardened judge results
 
-Summary tables are in [`final_results.md`](final_results.md).
+Summary tables (with column definitions) are in [`final_results.md`](final_results.md).

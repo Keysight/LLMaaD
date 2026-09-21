@@ -104,3 +104,16 @@ llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/detect_and_misdirect/*chun
 
 # misdirect_judge_pair local outputs (CSVs, scripts, extra JSONs — regeneratable)
 llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/misdirect_judge_pair/local_outputs/
+
+# Server-only dirs and notes — kept in server-snapshot branch, not in main
+/extra/
+/advsersarial_attacks/
+llmaad_vs_adv_attacks/autodan_results/reasoning_scenarios/
+llmaad_vs_adv_attacks/autodan_results/run_results/
+llmaad_vs_adv_attacks/autodan_results/turbo_scenarios/logs/
+llmaad_vs_adv_attacks/autodan_results/latest_attacker_judge.sh
+llmaad_vs_adv_attacks/autodan_results/new_plan.md
+llmaad_vs_adv_attacks/autodan_results/final_results/old/
+llmaad_vs_adv_attacks/post_hoc/claude_judge_autodan_old.py
+llmaad_vs_adv_attacks/autodan_results/llmaad_results/old/
+llmaad_vs_adv_attacks/autodan_results/lifelong_strategy_library.pkl
