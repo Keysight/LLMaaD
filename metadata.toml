@@ -69,44 +69,54 @@ expected4 = "Pre-computed: llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results
 
 # ── Hardware / Software / API ─────────────────────────────────────────────────
 hw = """
-Paper experiments were conducted on an NVIDIA DGX Spark:
+Paper experiments conducted on NVIDIA DGX Spark:
 - Architecture: NVIDIA GB10 Grace Blackwell Superchip
-- Memory: 128 GB unified (CPU+GPU shared, NVLink-C2C interconnect)
+- Memory: 128 GB unified (CPU + GPU shared, NVLink-C2C interconnect)
 - OS: Linux (Ubuntu 22.04)
-- Storage: >= 100 GB disk for Hugging Face model weights
+- Storage: 100 GB+ for Hugging Face model weights
+- Used 4x DGX Sparks concurrently for all experiment results
+- Models served:
+    Reshaper/Target2: mlabonne/NeuralDaredevil-8B-abliterated
+    Guard:            meta-llama/Llama-Guard-3-8B
+    Target1:          lmsys/vicuna-13b-v1.5
+    Scorer1:          gemma1-7b-it
+    Scorer2:          openai/gpt-oss-120b (MXFP4 quantized)
 
-Minimum for live re-execution by evaluators (8B models only, no 120B scorer):
-- Any NVIDIA GPU setup with >= 48 GB total VRAM (e.g., 2x A100 40GB, or 1x H100 80GB)
-  to concurrently serve victim LLM + detector + CMPE reshaper via vLLM
-- 64 GB system RAM
-- 100 GB disk
+Minimum for live re-execution (8B models only, no 120B scorer):
+- GPU: >= 48 GB total VRAM
+- RAM: >= 64 GB system RAM
+- Storage: >= 100 GB
 
 Functional verification using pre-computed result CSVs:
 - Any laptop/desktop, no GPU required, < 5 minutes
 """
 
 sw = """
-- OS: Linux (Ubuntu 20.04+); tested on Ubuntu 22.04
-- Python 3.10 or later
-- vLLM (>=0.4.0) for serving all local models
-- PyTorch (>=2.0) with CUDA support
-- Hugging Face transformers, accelerate
-- openai Python SDK (>=1.0)
+OS:     Linux (Ubuntu 20.04+), tested on Ubuntu 22.04
+Python: 3.10 or later
+CUDA:   >= 11.8
+
+Core packages:
+- vLLM >= 0.4.0       (local LLM serving)
+- PyTorch >= 2.0      (with CUDA)
+- transformers        (Hugging Face model loading)
+- accelerate          (model distribution)
+- openai >= 1.0       (attacker mutator + gpt-oss scorer)
 - pandas, numpy, tqdm
-- anthropic SDK (optional, for post-hoc Claude judging)
-- Install: pip install -r requirements.txt
-- All attack framework dependencies (AutoDAN, GPTFuzz, PAIR) are vendored
-  in the repository under their respective open-source licenses.
+- anthropic           (optional: post-hoc Claude judging only)
+
+Install: pip install -r requirements.txt
+All attack framework dependencies (AutoDAN, GPTFuzz, PAIR) are vendored
+in the repository under their respective open-source licenses.
 """
 
 api = """
-- OPENAI_API_KEY: Required only for GPTFuzz and PAIR attack frameworks
-  (used for GPT-3.5-turbo as the attacker mutator model). Not required for
-  AutoDAN-Turbo or AutoDAN-Reasoning experiments, or for verifying results
-  from pre-computed CSVs.
-- ANTHROPIC_API_KEY: Optional. Used only for post-hoc secondary judging via
-  claude_judge_autodan.py. Pre-computed Claude-judged CSVs are provided as
-  an alternative; this step can be skipped entirely for evaluation.
+- OPENAI_API_KEY:    Required for GPTFuzz and PAIR (GPT-3.5-turbo mutator).
+                     Not needed for AutoDAN or pre-computed CSV verification.
+- ANTHROPIC_API_KEY: Optional. Pre-computed Claude-judged CSVs are provided.
+
+All model server IPs/ports are configured via environment variables
+(no hardcoded addresses). See config.example.env at repo root.
 """
 
 gui = "n"
