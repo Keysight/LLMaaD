@@ -16,7 +16,7 @@ git clone https://github.com/Keysight/LLMaaD.git
 cd LLMaaD
 
 # AutoDAN-Turbo: CMPE reduces ASR to 0% (abliterated target)
-cat llmaad_vs_adv_attacks/autodan_results/final_results/turbo/abliterated_S3_algo1q_n50_claude_judged.csv
+cat llmaad_vs_adv_attacks/autodan_results/llmaad_results/turbo/detect_and_misdirect/abliterated_S3_n50.csv
 
 # GPTFuzz: CMPE reduces ASR to 0% TP
 ls llmaad_vs_adv_attacks/GPTFuzz/llmaad_results/detect_misdirect/
@@ -108,9 +108,9 @@ Each result CSV has these key columns:
 
 | Claim | File to Check | Success = |
 |---|---|---|
-| CMPE reduces AutoDAN-Turbo ASR to 0% (abliterated) | `autodan_results/final_results/turbo/abliterated_S3_algo1q_n50_claude_judged.csv` | `true_positives == 0` |
-| CMPE reduces AutoDAN-Turbo ASR to 0% (vicuna) | `autodan_results/final_results/turbo/vicuna_S3_algo1q_n50_claude_judged.csv` | `true_positives == 0` |
-| Detect+block (baseline) leaks true positives | `autodan_results/final_results/turbo/*_S2_*.csv` | `true_positives > 0` |
+| CMPE reduces AutoDAN-Turbo ASR to 0% (abliterated) | `autodan_results/llmaad_results/turbo/detect_and_misdirect/abliterated_S3_n50.csv` | `true_positives == 0` |
+| CMPE reduces AutoDAN-Turbo ASR to 0% (vicuna) | `autodan_results/llmaad_results/turbo/detect_and_misdirect/vicuna_S3_n50.csv` | `true_positives == 0` |
+| Detect+block (baseline) leaks true positives | `autodan_results/llmaad_results/turbo/detect_and_block/` | `true_positives > 0` |
 | CMPE reduces GPTFuzz ASR to 0% TP | `GPTFuzz/llmaad_results/detect_misdirect/*.csv` | `true_positives == 0` |
 | CMPE reduces PAIR ASR to 0% TP | `JailbreakingLLMs/llmaad_results/detect_and_misdirect/*.csv` | `true_positives == 0` |
 | CMPE holds under hardened judge | `JailbreakingLLMs/llmaad_results/misdirect_judge_pair/*.csv` | `true_positives` reduced vs baseline |
@@ -121,9 +121,9 @@ Each result CSV has these key columns:
 
 | Paper Claim (§VI-B) | Pre-computed File | Live Script |
 |---|---|---|
-| AutoDAN-Turbo CMPE ASR = 0% (abliterated) | `autodan_results/final_results/turbo/abliterated_S3_algo1q_n50_claude_judged.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3 --target abliterated` |
-| AutoDAN-Turbo CMPE ASR = 0% (vicuna) | `autodan_results/final_results/turbo/vicuna_S3_algo1q_n50_claude_judged.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3 --target vicuna` |
-| Detect+block leaks TP | `autodan_results/final_results/turbo/*_S2_*.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 2` |
+| AutoDAN-Turbo CMPE ASR = 0% (abliterated) | `autodan_results/llmaad_results/turbo/detect_and_misdirect/abliterated_S3_n50.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3 --target abliterated` |
+| AutoDAN-Turbo CMPE ASR = 0% (vicuna) | `autodan_results/llmaad_results/turbo/detect_and_misdirect/vicuna_S3_n50.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3 --target vicuna` |
+| Detect+block leaks TP | `autodan_results/llmaad_results/turbo/detect_and_block/` | `autodan_results/run_turbo_scenarios.py --scenarios 2` |
 | GPTFuzz CMPE ASR = 0% TP | `GPTFuzz/llmaad_results/detect_misdirect/` | `GPTFuzz/gptfuzz_llmaad_parallel.py --defense-mode detect-misdirect` |
 | PAIR CMPE ASR = 0% TP | `JailbreakingLLMs/llmaad_results/detect_and_misdirect/` | `JailbreakingLLMs/run_pair_detect_misdirect_parallel.py` |
 | CMPE under hardened judge | `JailbreakingLLMs/llmaad_results/misdirect_judge_pair/` | `JailbreakingLLMs/run_pair_detect_misdirect_parallel.py --judge hardened` |

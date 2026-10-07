@@ -124,7 +124,6 @@ export ANTHROPIC_FOUNDRY_RESOURCE=<resource-name>
 
 > **Strategy library:** `lifelong_strategy_library.pkl` is required for `use_strategy` and `find_new_strategy` mutations but is not tracked in this repo (>100 MB). See [`autodan_results/REFERENCES.md`](autodan_results/REFERENCES.md) for the download command.
 
-> **AutoDAN-Reasoning:** Two experimental runs were conducted but could not be used for the final paper due to invalid threat model configurations and a merge bug. See [`autodan_results/llmaad_results/reasoning/ISSUES_gemma_attacker_judge.md`](autodan_results/llmaad_results/reasoning/ISSUES_gemma_attacker_judge.md) for details.
 
 ## Running GPTFuzz Experiments
 

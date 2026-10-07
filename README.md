@@ -195,9 +195,9 @@ Attacker: gemma1-7b-it | Scorer: openai/gpt-oss-120b | Max epochs: 20 | Break sc
 
 | Paper Claim (§VI-B) | Pre-computed Result File | Live Script |
 |---|---|---|
-| CMPE reduces AutoDAN-Turbo ASR to 0% (abliterated target) | `autodan_results/final_results/turbo/abliterated_S3_algo1q_n50_claude_judged.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3` |
-| CMPE reduces AutoDAN-Turbo ASR to 0% (vicuna target) | `autodan_results/final_results/turbo/vicuna_S3_algo1q_n50_claude_judged.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3 --target vicuna` |
-| Detect+block (S2) leaks true positives | `autodan_results/final_results/turbo/*_S2_*.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 2` |
+| CMPE reduces AutoDAN-Turbo ASR to 0% (abliterated target) | `autodan_results/llmaad_results/turbo/detect_and_misdirect/abliterated_S3_n50.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3` |
+| CMPE reduces AutoDAN-Turbo ASR to 0% (vicuna target) | `autodan_results/llmaad_results/turbo/detect_and_misdirect/vicuna_S3_n50.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3 --target vicuna` |
+| Detect+block (S2) leaks true positives | `autodan_results/llmaad_results/turbo/detect_and_block/` | `autodan_results/run_turbo_scenarios.py --scenarios 2` |
 | CMPE reduces GPTFuzz ASR to 0% TP | `GPTFuzz/llmaad_results/detect_misdirect/` | `GPTFuzz/gptfuzz_llmaad_parallel.py --defense-mode detect-misdirect` |
 | CMPE reduces PAIR ASR to 0% TP | `JailbreakingLLMs/llmaad_results/detect_and_misdirect/` | `JailbreakingLLMs/run_pair_detect_misdirect_parallel.py` |
 | CMPE holds under hardened judge (PAIR) | `JailbreakingLLMs/llmaad_results/misdirect_judge_pair/` | `JailbreakingLLMs/run_pair_detect_misdirect_parallel.py --judge hardened` |
