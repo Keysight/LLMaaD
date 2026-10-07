@@ -4,6 +4,8 @@
 
 > Research artifact for the paper submitted to IEEE ACSAC 2026.
 
+> **Artifact Evaluators:** Start here → [ARTIFACT.md](ARTIFACT.md) — contains installation commands, expected runtimes, success criteria, claim-to-file mapping, and known limitations.
+
 ## Abstract
 
 As generative AI is integrated into agentic applications, defenses increasingly combine model-level safeguards and external security controllers to monitor and mediate agent interactions. At the same time, attackers are adopting model-guided automation to scale multi-step probing, semantic prompt refinement, and response evaluation beyond manual effort. We analyze this setting probabilistically and derive asymptotic bounds on attacker success rate (ASR) as a function of response evaluation error rates. The analysis shows that conventional detect-and-block defense strategies can allow ASR to approach one as the attacker query budget grows. To address this limitation, we propose a **detect-and-misdirect** defense strategy that replaces predictable refusal responses with controlled, non-operational responses designed to corrupt the attacker's automated response evaluation process through misdirection-induced false-positives. We show that such false-positives result in a bounded asymptotic ASR. We instantiate this idea through **Contextual Misdirection via Progressive Engagement (CMPE)**, a lightweight conversational misdirection method, and evaluate it on jailbreak benchmarks against multiple automated judge models. CMPE substantially increases attacker-side false-positives and reduces estimated ASR by up to two orders of magnitude across simulated attacker-defender judge configurations. We further evaluate CMPE against representative model-guided attack frameworks, PAIR and GPTFuzz, where it substantially reduces verified attack success rate and induces premature termination.
@@ -193,11 +195,11 @@ Attacker: gemma1-7b-it | Scorer: openai/gpt-oss-120b | Max epochs: 20 | Break sc
 
 | Paper Claim (§VI-B) | Pre-computed Result File | Live Script |
 |---|---|---|
-| CMPE reduces AutoDAN-Turbo ASR to 0% (abliterated target) | `autodan_results/final_results/turbo/abliterated_S3_algo1q_n50_claude_judged.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3` |
-| CMPE reduces AutoDAN-Turbo ASR to 0% (vicuna target) | `autodan_results/final_results/turbo/vicuna_S3_algo1q_n50_claude_judged.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3 --target vicuna` |
-| Detect+block (S2) leaks true positives | `autodan_results/final_results/turbo/*_S2_*.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 2` |
+| CMPE reduces AutoDAN-Turbo ASR to 0% (abliterated target) | `autodan_results/llmaad_results/turbo/detect_and_misdirect/abliterated_S3_n50.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3` |
+| CMPE reduces AutoDAN-Turbo ASR to 0% (vicuna target) | `autodan_results/llmaad_results/turbo/detect_and_misdirect/vicuna_S3_n50.csv` | `autodan_results/run_turbo_scenarios.py --scenarios 3 --target vicuna` |
+| Detect+block (S2) leaks true positives | `autodan_results/llmaad_results/turbo/detect_and_block/` | `autodan_results/run_turbo_scenarios.py --scenarios 2` |
 | CMPE reduces GPTFuzz ASR to 0% TP | `GPTFuzz/llmaad_results/detect_misdirect/` | `GPTFuzz/gptfuzz_llmaad_parallel.py --defense-mode detect-misdirect` |
 | CMPE reduces PAIR ASR to 0% TP | `JailbreakingLLMs/llmaad_results/detect_and_misdirect/` | `JailbreakingLLMs/run_pair_detect_misdirect_parallel.py` |
-| CMPE holds under hardened judge (PAIR) | `JailbreakingLLMs/llmaad_results/detect_and_misdirect_hardened/` | `JailbreakingLLMs/run_pair_detect_misdirect_parallel.py --judge hardened` |
+| CMPE holds under hardened judge (PAIR) | `JailbreakingLLMs/llmaad_results/misdirect_judge_pair/` | `JailbreakingLLMs/run_pair_detect_misdirect_parallel.py --judge hardened` |
 
 All pre-computed files include Claude-judged True Positive counts that directly support the ASR = 0% claims.

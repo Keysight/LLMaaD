@@ -105,6 +105,10 @@ llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/detect_and_misdirect/*chun
 # misdirect_judge_pair local outputs (CSVs, scripts, extra JSONs — regeneratable)
 llmaad_vs_adv_attacks/JailbreakingLLMs/llmaad_results/misdirect_judge_pair/local_outputs/
 
+# Intermediate AutoDAN turbo result files (canonical results are in detect_and_block/ and detect_and_misdirect/ subdirs)
+llmaad_vs_adv_attacks/autodan_results/llmaad_results/turbo/*.json
+llmaad_vs_adv_attacks/autodan_results/llmaad_results/turbo/*.csv
+
 # Server-only dirs and notes — kept in server-snapshot branch, not in main
 /extra/
 /advsersarial_attacks/
