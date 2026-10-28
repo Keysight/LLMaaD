@@ -203,3 +203,11 @@ Attacker: gemma1-7b-it | Scorer: openai/gpt-oss-120b | Max epochs: 20 | Break sc
 | CMPE holds under hardened judge (PAIR) | `JailbreakingLLMs/llmaad_results/misdirect_judge_pair/` | `JailbreakingLLMs/run_pair_detect_misdirect_parallel.py --judge hardened` |
 
 All pre-computed files include Claude-judged True Positive counts that directly support the ASR = 0% claims.
+
+---
+
+## Presentation
+
+The Black Hat / Keysight slide deck is available in this repository:
+
+[Final-LLMaad-BlackHat-Keysight.pdf](Final-LLMaad-BlackHat-Keysight.pdf)
