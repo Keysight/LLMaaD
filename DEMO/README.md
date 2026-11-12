@@ -8,7 +8,10 @@ For the full write-up — measured numbers, limitations, containment rationale,
 provenance — see [REFERENCE.md](REFERENCE.md). For the on-stage run order see
 [SPEAKER_NOTES.md](SPEAKER_NOTES.md).
 
-![LLMAD defence — same goal with the defence off and on](../assets/llmad-agentic.gif)
+<picture>
+  <source srcset="../assets/llmad-agentic.webp" type="image/webp">
+  <img src="../assets/llmad-agentic.gif" alt="LLMAD defence — same goal with the defence off and on">
+</picture>
 
 A recording of `agentic_ui.py` running one goal through both arms. The repo
 [README](../README.md#the-idea-in-one-picture) walks through what it shows.

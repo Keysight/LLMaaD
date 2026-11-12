@@ -2,7 +2,10 @@
 
 **Misdirection as a Defense Against Adversarial AI Agents**
 
-![LLMAD defence — planner vs researchers, same goal with the defence off and on](assets/llmad-agentic.gif)
+<picture>
+  <source srcset="assets/llmad-agentic.webp" type="image/webp">
+  <img src="assets/llmad-agentic.gif" alt="LLMAD defence — planner vs researchers, same goal with the defence off and on">
+</picture>
 
 > Research artifact for the paper submitted to IEEE ACSAC 2026.
 
