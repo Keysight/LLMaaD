@@ -2,6 +2,8 @@
 
 **Misdirection as a Defense Against Adversarial AI Agents**
 
+![LLMAD defence — planner vs researchers, same goal with the defence off and on](assets/llmad-agentic.gif)
+
 > Research artifact for the paper submitted to IEEE ACSAC 2026.
 
 > **Artifact Evaluators:** Start here → [ARTIFACT.md](ARTIFACT.md) — contains installation commands, expected runtimes, success criteria, claim-to-file mapping, and known limitations.
@@ -13,8 +15,6 @@ As generative AI is integrated into agentic applications, defenses increasingly 
 ---
 
 ## The idea in one picture
-
-![LLMAD defence — planner vs researchers, same goal with the defence off and on](assets/llmad-agentic.gif)
 
 A planner agent is given a harmful objective and three researcher agents to work
 through. All three researchers are the same model; the defence is applied to all
