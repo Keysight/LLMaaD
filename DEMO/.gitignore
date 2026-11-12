@@ -1,0 +1,15 @@
+# The adapter weights are a poisoned artifact and 114 MB. SECURITY.md's rule is
+# "do not upload modified weights or adapters to a public or shared hub", and
+# the repo's top-level .gitignore already excludes outputs/ for the same reason.
+# This directory sits outside outputs/, so the exclusion has to be repeated here.
+#
+# Everything else in adapter/ (config, tokenizer, the PEFT card) is small and
+# tracked, so the recipe stays in version control and only the weights travel
+# out of band. Copy them in with:
+#   cp ../outputs/llmad-misdirection-qwen3b-v2-mixed/adapter/adapter_model.safetensors adapter/
+# then confirm with: python3 verify_adapter.py
+adapter/adapter_model.safetensors
+
+# Local symlink to a working Python env; absolute path, machine-specific.
+.venv
+__pycache__/

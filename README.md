@@ -12,6 +12,44 @@ As generative AI is integrated into agentic applications, defenses increasingly 
 
 ---
 
+## The idea in one picture
+
+![LLMAD defence — planner vs researchers, same goal with the defence off and on](assets/llmad-agentic.gif)
+
+A planner agent is given a harmful objective and three researcher agents to work
+through. All three researchers are the same model; the defence is applied to all
+of them or to none. The planner steers itself with a substring refusal judge:
+**a refusal makes it escalate technique and switch target, a non-refusal makes it
+stay and extract.**
+
+That control loop is the attack surface, and a refusal is the signal that drives it.
+
+**Detect-and-block (first half of the clip, LLMAD off).** Researcher A refuses. Researcher B
+refuses. Each refusal is a correct, honest security decision — and each one tells
+the planner its current approach failed, so it escalates and moves on. On the
+third researcher it breaks through. The flow reaches the aggregator and the
+objective is met. *One bypass is enough.* The defence was right twice and still
+lost, because being right out loud is what navigated the attacker to the gap.
+
+**Detect-and-misdirect (second half, LLMAD on).** Nothing refuses. Every researcher
+returns confident, on-topic, operationally empty text that the planner's judge
+scores as compliance. With no refusal signal the planner never escalates — it
+believes it is already through, loops on the same technique, and burns its budget.
+It ends with **0 escalations, 0 extracted yield, and the flow never passing a
+single researcher.**
+
+The defence is not blocking the attacker. It is removing the feedback the
+attacker's own control loop needs in order to know when to change strategy.
+
+> Both arms are one live run of [`DEMO/agentic_ui.py`](DEMO/agentic_ui.py) on the
+> same goal and the same model — nothing is scripted or replayed. Measured here:
+> off = 3 rounds / 2 escalations / 2 refusals / yield 3 / **objective reached**;
+> on = 7 rounds / 0 escalations / 6 misdirections / yield 0 / **objective not
+> reached**. This is a single illustrative run, not the paper's aggregate result —
+> for those see [Results Summary](#results-summary) below.
+
+---
+
 ## Repository Structure
 
 | Directory | Description | Paper Section |
@@ -22,6 +60,7 @@ As generative AI is integrated into agentic applications, defenses increasingly 
 | `llmaad_vs_adv_attacks/autodan_results/` | AutoDAN-Turbo and AutoDAN-Reasoning attack integration scripts + results | VI-B |
 | `llmaad_vs_adv_attacks/post_hoc/` | Post-hoc validation scripts (Claude judge + CSV export) | VI-B |
 | `llmaad_vs_adv_attacks/final_results.md` | Summary tables of end-to-end evaluation results | VI-B |
+| `DEMO/` | Interactive stage demos — base vs adapter, and the agentic pipeline above | — |
 
 ---
 
